@@ -16,6 +16,20 @@ ss.http.route('/', function(req, res){
   res.serveClient('main');
 });
 
+// Define a single-page client called 'main'
+ss.client.define('levelone', {
+  view: 'levelone.html',
+  css:  ['libs/', 'app.styl'],
+  code: ['libs/', 'app'],
+  tmpl: '*'
+});
+
+// Serve this client on the root URL
+ss.http.route('/levelone', function(req, res){
+  res.serveClient('levelone');
+});
+
+
 // Code Formatters
 ss.client.formatters.add(require('ss-stylus'));
 
