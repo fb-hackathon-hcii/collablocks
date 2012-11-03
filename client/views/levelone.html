@@ -47,7 +47,7 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
-				camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000 );
 				camera.position.y = 800;
 
 				scene = new THREE.Scene();
@@ -233,6 +233,7 @@
 			 
 			function testAddBlock()
 			{
+				// addBlock(0, 0, color, id)
 				addBlock(0,0, 0x00ff80, 0);
 				addBlock(0,0, 0x00ff80, 1);
 				addBlock(15,15, 0x000000, 2);
@@ -241,12 +242,11 @@
 				addBlock(15,15, 0x0fafaf, 7);
 				addBlock(0,0, 0x00ff80, 3);
 				addBlock(0,0, 0x00ff80, 4);
-				console.log(grid[0][0][0].id);
 			}
 			
 			function testRemoveBlock()
 			{
-				// x, y, id
+				// removeBlock(x, y, id)
 //				removeBlock(15, 15, 2);
 				removeBlock(15, 15, 6);
 //				removeBlock(15, 15, 5);
