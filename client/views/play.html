@@ -60,6 +60,7 @@
 // 					
 // 			});
 			
+      /*
 			$('td').bind( "vmousedown", function(){
 				var theCell = $(this);
 				theCell.x = theCell.attr('id');
@@ -67,30 +68,32 @@
 				if (theCell.hasClass('active')){
 						theCell.css('background-color', '');
 						theCell.removeClass('active');
-					  	ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
+					  //ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 0});
 
 					}else{
 						theCell.css('background-color', playerColor);
 						theCell.addClass('active');
-					  	ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
+					  //ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
 
 					}
 			});
-				
+				*/
 			$('td').bind( "vmouseout", function(){
 				var theCell = $(this);
 				theCell.x = theCell.attr('id');
 				theCell.y = theCell.parent().attr('id');
-				if(clicking == true){
+//				if(clicking == true){
 					//console.log('Moved in cell: ' + theCell.x + ',' + theCell.y + ' ; clicking: ' + clicking);
-					if (theCell.hasClass('active')){
-						theCell.css('background-color', '');
-						theCell.removeClass('active');
-					}else{
+//					if (theCell.hasClass('active')){
+//						theCell.css('background-color', '');
+//						theCell.removeClass('active');
+            //ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 0});
+//					}else{
 						theCell.css('background-color', playerColor);
-						theCell.addClass('active');
-					}
-				}
+//						theCell.addClass('active');
+            //ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
+//					}
+//				}
 			});
 			
 			document.body.addEventListener('touchstart', function(e){ e.preventDefault(); });			

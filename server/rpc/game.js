@@ -83,12 +83,11 @@ exports.actions = function(req, res, ss) {
 
     subscribeView: function() {
       req.session.channel.subscribe('results')
+      getNewLevel()
       return res(true)
     },
 
     subscribeTeam1: function() {
-      console.log(getNewLevel())
-
       req.session.channel.subscribe('resultsteam1')
       return res(true)
     },
@@ -114,7 +113,7 @@ exports.actions = function(req, res, ss) {
     },
 
     inputChange: function(data) {
-      console.log(data)
+      //console.log(data)
       if (req.session && data && data.x != null && data.y != null && data.value != null) {
         var grid = req.session.grid || getEmptyGrid()
 
@@ -126,7 +125,7 @@ exports.actions = function(req, res, ss) {
           grid[x*gameSize.x+y-1] = z
           req.session.grid = grid
           req.session.save(function(err){
-            console.log('Session data saved:', req.session.color) 
+            //console.log('Session data saved:', req.session.color) 
           })
           
           switch (z) {

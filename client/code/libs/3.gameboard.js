@@ -263,19 +263,19 @@
 			return 0
 	}
 
-	visualizeLevel = function(inJSON)
+	visualizeLevel = function()
 	{
 		//addMeshBlock(0,0,0, createRandomColor())
 		var levelColor = createRandomColor()
-		var xbound = inJSON['bounds']['x']
+		var xbound = level['bounds']['x']
 		//var zbound = inJSON['bounds']['y']
-		var levelData = inJSON['data']
+		var levelData = level['data']
 
 		var x = z = prvx = 0
 		for(var i=0;i<levelData.length;i++)
 		{
 			for (var h=0; h < levelData[i]; h++) {
-				addMeshBlock(i % xbound, h, Math.floor(i/xbound), levelColor)		
+				addMeshBlock(i % xbound, h, Math.floor(i/xbound), levelColor)
 			}
 		}
 
@@ -319,7 +319,11 @@ $(document).ready(function() {
 
 	ss.event.on('newLevel', function(level) {
 		console.log('new level!', level)
-		visualizeLevel(level)
+		if (!window.level) {		
+			window.level = level
+			visualizeLevel()
+		}
+
 	})
 
 	ss.rpc('game.subscribeView', function(res){
