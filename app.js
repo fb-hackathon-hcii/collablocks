@@ -16,18 +16,32 @@ ss.http.route('/', function(req, res){
   res.serveClient('main');
 });
 
-// Define a single-page client called 'main'
-ss.client.define('results', {
-  view: 'levelone.html',
+// Define a single-page client called 'teamone'
+ss.client.define('teamone', {
+  view: 'teamone.html',
   css:  ['libs/', 'app.styl'],
   code: ['libs/', 'app'],
   tmpl: '*'
 });
 
 // Serve this client on the root URL
-ss.http.route('/results', function(req, res){
-  res.serveClient('results');
+ss.http.route('/android', function(req, res){
+  res.serveClient('teamone');
 });
+
+// Define a single-page client called 'ios'
+ss.client.define('ios', {
+  view: 'teamtwo.html',
+  css:  ['libs/', 'app.styl'],
+  code: ['libs/', 'app'],
+  tmpl: '*'
+});
+
+// Serve this client on the root URL
+ss.http.route('/ios', function(req, res){
+  res.serveClient('ios');
+});
+
 
 
 // Code Formatters
