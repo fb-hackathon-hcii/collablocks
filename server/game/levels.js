@@ -1,10 +1,4 @@
-// Define actions which can be called from the client using ss.rpc('demo.ACTIONNAME', param1, param2...)
-
-exports.actions = function(req, res, ss) {
-
-  return {
-
-    generateLevelOneJSON: function(ingridx, ingridz, players)
+exports.generateLevelOneJSON = function(ingridx, ingridz, players)
     {
       var outData = []
       var data = []
@@ -27,15 +21,12 @@ exports.actions = function(req, res, ss) {
         }
       }
 
+
       var jsonver = {
         name: 'level ONE',
         bounds: {x:ingridx, y:ingridz, v:players},
         data: outData
       }
 
-      return res(jsonver)
-    }
-
+      return jsonver
   }
-
-}

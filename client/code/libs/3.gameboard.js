@@ -268,12 +268,19 @@
 		addMeshBlock(0,0,0, createRandomColor())
 		var levelColor = createRandomColor()
 		var xbound = inJSON['bounds']['x']
-		var zbound = inJSON['bounds']['y']
+		//var zbound = inJSON['bounds']['y']
 		var levelData = inJSON['data']
 
 		var x = z = prvx = 0
 		for(var i=0;i<levelData.length;i++)
 		{
+			for (var h=0; h < levelData[i]; h++) {
+				addMeshBlock(i % xbound, h, Math.floor(i/xbound), levelColor)		
+			}
+		}
+
+			/*
+
 			x = i%xbound
 
 			if(prvx == x)
@@ -288,7 +295,8 @@
 			}
 
 			prvx = x
-		}
+		*/
+
 	}
 	
 		
@@ -308,6 +316,10 @@ $(document).ready(function() {
 	ss.event.on('removeBlock', function(options) {
 	  removeBlock(options.x, options.y, options.id)
 	});
+
+	ss.event.on('newLevel', function(level) {
+		console.log('new level!', level)
+	})
 
 	ss.rpc('game.subscribeView', function(res){
 		console.log('subscribed to updates', res)

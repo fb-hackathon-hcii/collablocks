@@ -1,3 +1,6 @@
+var util = require('util')
+  , levelGenerator = new require('./../game/levels')
+
 // Define actions which can be called from the client using ss.rpc('demo.ACTIONNAME', param1, param2...)
 
 exports.actions = function(req, res, ss) {
@@ -62,16 +65,19 @@ exports.actions = function(req, res, ss) {
     }
   ]*/
 
-  var getNewLevel = function(level) {
-    ss.publish.channel('results', 'newLevel', {name: 'the four towers',
-      bounds: {x:15, y:15, v:10},
-      data: [0, 5, 6, 6 ]})
+  /* CONST */
+  var gameSize = {x:16, y:16}
+  var teamNames = ['Banana', 'Strawberry']
+
+  var getNewLevel = function() {
+    //TODO
+    var playernum = 10
+    console.log(levelGenerator)
+    var level = levelGenerator.generateLevelOneJSON(gameSize.x, gameSize.y, playernum)
+    ss.publish.channel('results', 'newLevel', level)
+    return level
   }
 
-
-  /* CONST */
-  var gameSize = {x:15, y:15}
-  var teamNames = ['Banana', 'Strawberry']
 
   return {
 
@@ -81,6 +87,8 @@ exports.actions = function(req, res, ss) {
     },
 
     subscribeTeam1: function() {
+      console.log(getNewLevel())
+
       req.session.channel.subscribe('resultsteam1')
       return res(true)
     },
