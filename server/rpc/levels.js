@@ -42,14 +42,14 @@ exports.actions = function(req, res, ss) {
       var outData = []
       for(var i=0; i <xmax*ymax; i++)
       {
-            outData.push( Math.round( i%xmax/xmax * zmax ) )
+            outData.push( Math.round( zmax - (i%xmax/xmax * zmax) ) )
       }
       var jsonver = {
         name: 'The Slope',
         bounds: {x:xmax, y:ymax, v:zmax},
         data: outData
       }
-      return jsonver
+      return res(jsonver)
     }
 
   }

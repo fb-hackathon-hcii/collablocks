@@ -330,7 +330,7 @@ $(document).ready(function() {
 		fps=0
 	}, 1000)
 
-	ss.rpc('levels.generateLevelOneJSON', 16, 16, 4, function(res) {
+	ss.rpc('levels.generateLevelTwo', 16, 16, 10, function(res) {
 		console.log(res)
 		visualizeLevel(res)
 	})

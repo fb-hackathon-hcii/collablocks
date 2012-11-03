@@ -36,7 +36,7 @@ exports.generateLevelTwo = function(xmax, ymax, zmax)
   var outData = []
   for(var i=0; i <xmax*ymax; i++)
   {
-        outData.push( Math.round( i%xmax/xmax * zmax ) )
+        outData.push( Math.round( zmax - (i%xmax/xmax * zmax) ) )
   }
 
   var jsonver = {
