@@ -14,21 +14,21 @@ ss.client.define('main', {
 ss.client.define('play', {
   view: 'play.html',
   css:  ['libs/', 'app.styl'],
-  code: ['libs/', 'app'],
+  code: ['libs/', 'inputclient'],
   tmpl: '*'
 });
 
 ss.client.define('teamone', {
   view: 'teamone.html',
   css:  ['libs/', 'app.styl'],
-  code: ['libs/', 'app'],
+  code: ['libs/', 'outputclient'],
   tmpl: '*'
 });
 
 ss.client.define('teamtwo', {
   view: 'teamtwo.html',
   css:  ['libs/', 'app.styl'],
-  code: ['libs/', 'app'],
+  code: ['libs/', 'outputclient'],
   tmpl: '*'
 });
 
@@ -46,12 +46,12 @@ ss.http.route('/play', function(req, res){
 });
 
 // Serve this client on the root URL
-ss.http.route('/android', function(req, res){
+ss.http.route('/pirates', function(req, res){
   res.serveClient('teamone');
 });
 
 // Serve this client on the root URL
-ss.http.route('/ios', function(req, res){
+ss.http.route('/ninjas', function(req, res){
   res.serveClient('teamtwo');
 });
 

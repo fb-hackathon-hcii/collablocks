@@ -317,8 +317,8 @@
 	
 		
 $(document).ready(function() {
-	//init();
-	//animate();
+	init();
+	animate();
 
 	ss.rpc('game.subscribeTeam1', function(res){
 		console.log('subscribed to team1 updates', res)
