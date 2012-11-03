@@ -16,7 +16,7 @@
         }
       });
 
-  		var tableWidth;
+  			var tableWidth;
 			var tableHeight;
 			var numTD = 16;
 			var numTR = 16;
@@ -24,30 +24,73 @@
 			createTDs(numTD);
 			setDimensions();
 			
+			var clicking = false;
+			
+			$(document).mousedown(function(){
+				clicking = true;
+			})
+			
+			$(document).mouseup(function(){
+				clicking = false;
+			})
+			
 			$(window).resize(function(){
 				setDimensions();
 			});
 			
-			$('td').click(function(){
+// 			$('td').click(function(){
+// 				var theCell = $(this);
+// 				theCell.x = theCell.attr('id');
+// 				theCell.y = theCell.parent().attr('id');
+// 	
+// 				}).toggle(function(){
+// 				  var theCell = $(this)
+// 				  theCell.css({backgroundColor: playerColor})
+// 				  ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
+// 				}, function() {
+// 				  var theCell = $(this)
+// 				  $(this).css({backgroundColor: ''})
+// 				  ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 0});
+// 				})
+// 					
+// 			});
+			
+			$('td').mouseleave(function(){
 				var theCell = $(this);
 				theCell.x = theCell.attr('id');
 				theCell.y = theCell.parent().attr('id');
+//				console.log('Clicked: ' + clicking);
+				theCell.toggle(function(){
+					console.log('Clicked: ' + clicking);
+				  var theCell = $(this);
+				  theCell.css({backgroundColor: playerColor});
+				  ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
+				  	
+				}, function() {
+					console.log('Clicked: ' + clicking);
+				  var theCell = $(this);
+				  $(this).css({backgroundColor: ''});
+				  ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 0});
+				 
+				})
 				
-			//	alert('x: ' + theCell.x + ', y: ' + theCell.y);
+				}).toggle(function(){
+					console.log('Clicked: ' + clicking);
+				  var theCell = $(this);
+				  theCell.css({backgroundColor: playerColor});
+				  ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
+				  	
+				}, function() {
+					console.log('Clicked: ' + clicking);
+				  var theCell = $(this);
+				  $(this).css({backgroundColor: ''});
+				  ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 0});
+				 
+				})
+					
+			});
 			
-				
-
-			}).toggle(function(){
-          var theCell = $(this)
-          theCell.css({backgroundColor: playerColor})
-          ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
-        }, function() {
-          var theCell = $(this)
-          $(this).css({backgroundColor: ''})
-          ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 0});
-        })
 			
-  		});
   	</script>
   	<script>
   		function createTRs(numberTR){
