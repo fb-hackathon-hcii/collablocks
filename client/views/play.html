@@ -127,6 +127,10 @@
 		function clearCells(){
 			$('td').css('background-color', '');
 		}
+
+    ss.event.on('clearInput', function() {
+      clearCells()
+    })
 		
 	</script>
 	<style>		
