@@ -22,6 +22,8 @@
 				testAddBlock();
 				testRemoveBlock();
 				*/
+				var gameboard = require('./gameboard.js');
+
 				ss.rpc('game.subscribeTeam2', function(res){
 					console.log('subscribed to team2 updates', res)
 				})
