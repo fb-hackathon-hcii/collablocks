@@ -1,11 +1,68 @@
 var util = require('util')
   , levelGenerator = new require('./../game/levels')
+  , redis = require("redis")
+  , rclient = redis.createClient()
+
+
+  rclient.on('error', function(err) {
+    console.log('redis error!', err)
+  })
 
 // Define actions which can be called from the client using ss.rpc('demo.ACTIONNAME', param1, param2...)
-
 exports.actions = function(req, res, ss) {
 
   req.use('session')
+
+
+
+
+
+
+//rclient.set("string foo", "string bar", redis.print);
+
+
+  /* CONST */
+  var gameSize = {x:16, y:16}
+  
+  /* GLOBALS */
+  var teams = []
+
+var getEmptyGrid = function(initVal) {
+    var g = [] 
+    for(var i = 0; i < gameSize.x * gameSize.y; i++) {
+      g.push(initVal)
+    }
+    return g
+  }
+
+  var setupTeams = function(){
+    teams.push({name: 'Pirates', members: [], data: getEmptyGrid([])})
+    teams.push({name: 'Ninjas', members: [], data: getEmptyGrid([])})
+  }
+  setupTeams()
+
+  var getGameCompletion = function(level, playerdata) {
+    var levelTotal = 0
+    var deviations = 0
+    for (var i=0; i < level.bounds.x * level.bounds.y; i++) {
+      levelTotal += level.data[i]
+      deviations += abs(level.data[i] - playerdata[i])
+    }
+    return Math.max(0, 1 - deviations/levelTotal)
+  }
+
+
+  var getNewLevel = function() {
+    //TODO
+    var playernum = 4
+    var level = levelGenerator.generateLevelOneJSON(gameSize.x, gameSize.y, playernum)
+    ss.publish.channel('results', 'newLevel', level)
+    return level
+  }
+
+
+
+
 
   /**
    * Converts an HSL color value to RGB. Conversion formula
@@ -39,45 +96,6 @@ exports.actions = function(req, res, ss) {
       return '#' + Math.floor(r*255).toString(16) + Math.floor(g*255).toString(16) + Math.floor(b * 255).toString(16)
   }
 
-  var getEmptyGrid = function() {
-    var g = [] 
-    for(var i = 0; i < gameSize.x * gameSize.y; i++) {
-      g.push(0)
-    }
-    return g
-  }
-
-  var getGameCompletion = function(level, playerdata) {
-    var levelTotal = 0
-    var deviations = 0
-    for (var i=0; i < level.bounds.x * level.bounds.y; i++) {
-      levelTotal += level.data[i]
-      deviations += abs(level.data[i] - playerdata[i])
-    }
-    return Math.max(0, 1 - deviations/levelTotal)
-  }
-
-  /*
-  var levels = [
-    { name: 'the four towers',
-      bounds: {x:15, y:15, v:10},
-      data: [0, 5, 6, 6, ... ]
-    }
-  ]*/
-
-  /* CONST */
-  var gameSize = {x:16, y:16}
-  var teamNames = ['Pirates', 'Ninjas']
-
-  var getNewLevel = function() {
-    //TODO
-    var playernum = 4
-    console.log(levelGenerator)
-    var level = levelGenerator.generateLevelOneJSON(gameSize.x, gameSize.y, playernum)
-    ss.publish.channel('results', 'newLevel', level)
-    return level
-  }
-
 
   return {
 
@@ -103,11 +121,15 @@ exports.actions = function(req, res, ss) {
         var team = Math.floor(Math.random()*2)
         req.session.color = color
         req.session.team = team
+        req.session.grid = getEmptyGrid(0)
+        //teams[team].members.push(req.sessionId)
+        req.session.channel.subscribe('team' + team)
+
         req.session.save(function(err){
-          return res(true, {color: color, team: teamNames[team]})  
+          return res(true, {color: color, team: teams[team].name, grid: req.session.grid})  
         })  
       } else {
-        return res(true, {color: req.session.color, team: teamNames[req.session.team]})
+        return res(true, {color: req.session.color, team: teams[req.session.team].name, grid: req.session.grid})
       }
 
     },
@@ -115,7 +137,7 @@ exports.actions = function(req, res, ss) {
     inputChange: function(data) {
       //console.log(data)
       if (req.session && data && data.x != null && data.y != null && data.value != null) {
-        var grid = req.session.grid || getEmptyGrid()
+        var grid = req.session.grid || getEmptyGrid(0)
 
         var x = Math.max(0, Math.min(gameSize.x, Math.floor(data.x)))
         var y = Math.max(0, Math.min(gameSize.y-1, Math.floor(data.y)))

@@ -49,6 +49,10 @@ ss.events.on("end",function(session){
 
 ss.responders.add(require('ss-heartbeat-responder'), {beatDelay:5, expireDelay:10, purgeDelay:15, logging:1});
 
+ss.api.heartbeat.on('connect', function(session) {
+  console.log('client connected')
+});
+
 ss.api.heartbeat.on('disconnect', function(session) {
   console.log('client disconnected')
 });
