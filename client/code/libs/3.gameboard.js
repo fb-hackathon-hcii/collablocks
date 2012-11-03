@@ -306,6 +306,17 @@
 		*/
 
 	}
+
+	updateLevelName = function(name)
+	{
+		$('#level-name').append(name)
+	}
+
+	updateLevelProgress = function(progress)
+	{
+
+		$('#level-complete').css('width', progress + '%')
+	}
 	
 		
 $(document).ready(function() {
@@ -330,7 +341,9 @@ $(document).ready(function() {
 	});
 
 	ss.event.on('newLevel', function(level) {
-		console.log('new level!', level)
+		console.log('new level: ', level["name"])
+		updateLevelName(level["name"])
+		updateLevelProgress(10)
 		visualizeLevel(level)
 	})
 
@@ -343,13 +356,6 @@ $(document).ready(function() {
 		//console.log('fps: '+fps)
 		fps=0
 	}, 1000)
-*/
-
-	/*
-	ss.rpc('levels.generateLevelOneJSON', 16, 16, 4, function(res) {
-		console.log(res)
-		visualizeLevel(res)
-	})
 	*/
 
 });
