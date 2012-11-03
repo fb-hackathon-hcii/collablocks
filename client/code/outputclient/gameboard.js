@@ -104,38 +104,79 @@
 	function addBlock(x, y, color, id)
 	{
 		
-		var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors, transparent: true } );
-		material.opacity = .75;
-
 		var z = grid[x][y].length;
-		var voxelBlock = addRawBlock(x, y, z, color, material);
-		voxelBlock.id = id;
-		grid[x][y].push(voxelBlock);
+		
+		var block = new Block(x, y, z, color, 1, id);
+		animateAddBlock(block);
+
+
+//		voxelBlock.id = id;
+//		grid[x][y].push(voxelBlock);
 	}
 	
-	function addRawBlock(x, y, z, color, material)
+	function Block(x, y, z, color, blockHeight, id)
 	{
-		var geometry = new THREE.CubeGeometry( blockSize, blockHeight, blockSize);
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.color = color;
+		this.blockHeight = blockHeight;
+		this.id = id;
+				
+		this.createNewVoxel = function() {
+			var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors, transparent: false } );
+			material.opacity = .75;
+		
+			var geometry = new THREE.CubeGeometry( blockSize, this.blockHeight, blockSize);
 	
-		for ( var i = 0; i < geometry.faces.length; i ++ ) {
-			geometry.faces[ i ].color.setHex( color );
+			for ( var i = 0; i < geometry.faces.length; i ++ ) {
+				geometry.faces[ i ].color.setHex( color );
+			}
+
+			var voxel = new THREE.Mesh( geometry, material );
+			voxel.position.y = this.blockHeight * this.z  + 25;  // this is the z-axis				
+			voxel.position.x = blockSize * (this.x - size/2) + 25;  
+			voxel.position.z = blockSize * (this.y - size/2) + 25;
+			voxel.matrixAutoUpdate = false;
+			voxel.updateMatrix();
+			this.currentVoxel = voxel;
+			return voxel;		
+		};
+		
+		this.currentVoxel = this.createNewVoxel();
+
+	}
+
+	
+	function animateAddBlock(block)
+	{
+		var animationId = requestAnimationFrame(
+			function(callback, element) {
+				animateAddBlock(block);
+			}
+		);
+		
+		if ((block.blockHeight % blockHeight) == 0)
+		{
+			cancelAnimationFrame(animationId);
+			var voxelBlock = block.currentVoxel;
+			voxelBlock.id = block.id;
+			grid[block.x][block.y].push(voxelBlock);
+			console.log(scene);
 		}
-	
-		var voxel = new THREE.Mesh( geometry, material );
-		voxel.position.y = blockHeight * z + 25;  // this is the z-axis				
-		voxel.position.x = blockSize * (x - size/2) + 25;  
-		voxel.position.z = blockSize * (y - size/2) + 25;
-		voxel.matrixAutoUpdate = false;
-		voxel.updateMatrix();
-		scene.add( voxel );
-		return voxel;
+		else
+		{
+			scene.remove(block.currentVoxel);
+//			block.currentVoxel.scale.y += 5;
+			block.blockHeight += 1;
+			scene.add(block.createNewVoxel());
+		}
 	}
 	
 	// sorry whoever has to read this =(
 	function removeBlock(x, y, id)
 	{
 		var blockCandidates = grid[x][y];
-		
 		var untouchedBlocks = new Array();
 		var blocksToShift = new Array();
 		
@@ -162,7 +203,7 @@
 		for (var i = 0; i<blocksToShift.length; i++)
 		{
 			scene.remove(blocksToShift[i]);
-			blocksToShift[i].position.y -= blockSize;
+			blocksToShift[i].position.y -= blockHeight;
 			blocksToShift[i].updateMatrix();
 			scene.add(blocksToShift[i]);
 		}
