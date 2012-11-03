@@ -100,7 +100,7 @@
 	function addBlock(x, y, color, id)
 	{
 		
-		var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors } );
+		var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors, transparent: true } );
 		material.opacity = .75;
 
 		var z = grid[x][y].length;
