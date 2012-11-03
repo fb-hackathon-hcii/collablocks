@@ -11,9 +11,22 @@ ss.client.define('main', {
   tmpl: '*'
 });
 
+ss.client.define('play', {
+  view: 'play.html',
+  css:  ['libs/', 'app.styl'],
+  code: ['libs/', 'app'],
+  tmpl: '*'
+});
+
+
 // Serve this client on the root URL
 ss.http.route('/', function(req, res){
   res.serveClient('main');
+});
+
+// Serve this client on the root URL
+ss.http.route('/play', function(req, res){
+  res.serveClient('play');
 });
 
 // Code Formatters
