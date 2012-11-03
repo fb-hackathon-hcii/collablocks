@@ -242,9 +242,9 @@
 		var material = new THREE.MeshBasicMaterial( { color: inColor, wireframe: true, transparent: true, wireframeLinewidth: 1 } ); 
 
 		var voxel = new THREE.Mesh( geometry, material );
-		voxel.position.x = blockSize * (x-8) + 25;
+		voxel.position.x = blockSize * (x-(size/2)) + 25;
 		voxel.position.y = blockSize * y + 25;
-		voxel.position.z = blockSize * (z-8) + 25;
+		voxel.position.z = blockSize * (z-(size/2)) + 25;
 		voxel.matrixAutoUpdate = false;
 		voxel.updateMatrix();
 		//console.log(voxel);

@@ -124,6 +124,7 @@ exports.actions = function(req, res, ss) {
         //if (grid[x*gameSize.x+y] != z) {
           grid[x*gameSize.x+y] = z
           req.session.grid = grid
+          console.log(req.session.grid)
           //console.log('grid updated')
           req.session.save(function(err){
             //console.log('Session data saved:', req.session.color) 
