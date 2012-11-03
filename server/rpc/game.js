@@ -71,6 +71,16 @@ exports.actions = function(req, res, ss) {
       return res(true)
     },
 
+    subscribeTeam1: function() {
+      req.session.channel.subscribe('resultsteam1')
+      return res(true)
+    },
+
+    subscribeTeam2: function() {
+      req.session.channel.subscribe('resultsteam2')
+      return res(true)
+    },
+
     registerClient: function() {
       var color = hslToRgb(Math.random(), 0.8, 0.8)
       req.session.color = color
@@ -82,7 +92,7 @@ exports.actions = function(req, res, ss) {
 
     inputChange: function(data) {
       console.log(data)
-      if (req.session && data && data.x && data.y && data.value) {
+      if (req.session && data && data.x != null && data.y != null && data.value != null) {
         var grid = req.session.grid || getEmptyGrid()
 
         var x = Math.max(0, Math.min(gameSize.x-1, Math.floor(data.x)))
@@ -95,7 +105,12 @@ exports.actions = function(req, res, ss) {
           req.session.save(function(err){
             console.log('Session data saved:', req.session.color) 
           })
-          ss.publish.channel('results', 'setBlock', {x:x, y:y, color: req.session.color, id: req.sessionId})
+          
+          switch (z) {
+            case 0: ss.publish.channel('results', 'removeBlock', {x:x, y:y, id: req.sessionId}); break;
+            case 1: ss.publish.channel('results', 'setBlock', {x:x, y:y, color: req.session.color.replace(/#/gi, '0x'), id: req.sessionId}); break;
+          }
+          
         }
 
         return res(true)
