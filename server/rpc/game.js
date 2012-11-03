@@ -25,7 +25,7 @@ exports.actions = function(req, res, ss) {
   var gameSize = {x:16, y:16}
   
   /* GLOBALS */
-  var teams = []
+  var teams = [] 
 
 var getEmptyGrid = function(initVal) {
     var g = [] 
@@ -57,6 +57,31 @@ var getEmptyGrid = function(initVal) {
     var playernum = 4
     var level = levelGenerator.generateLevelOneJSON(gameSize.x, gameSize.y, playernum)
     ss.publish.channel('results', 'newLevel', level)
+    return level
+  }
+
+  var getNextLevel = function(level_num, playernum, inChannel) {
+
+    var level = {}
+    switch(level_num)
+    {
+      case 0:
+        level = levelGenerator.generateTrainingJSON(gameSize.x, gameSize.y, playernum)
+        break;
+
+      case 1:
+        level = levelGenerator.generateLevelOneJSON(gameSize.x, gameSize.y, playernum)
+        break;
+
+      case 2:
+        level = levelGenerator.generateLevelTwoJSON(gameSize.x, gameSize.y, playernum)
+        break;
+    }
+
+    if(inChannel == 'resultsteam1')
+      ss.publish.channel(inChannel, 'newLevel', level)
+    else
+      ss.publish.channel(inChannel, 'newLevel2', level)
     return level
   }
 
@@ -99,19 +124,26 @@ var getEmptyGrid = function(initVal) {
 
   return {
 
+    activateNextLevel: function(level_num, playernum, inChannel)
+    {
+      getNextLevel(level_num, playernum, inChannel)
+    },
+
     subscribeView: function() {
       req.session.channel.subscribe('results')
-      getNewLevel()
+      //getNewLevel()
       return res(true)
     },
 
     subscribeTeam1: function() {
       req.session.channel.subscribe('resultsteam1')
+      getNextLevel(0, 0, 'resultsteam1')
       return res(true)
     },
 
     subscribeTeam2: function() {
       req.session.channel.subscribe('resultsteam2')
+      getNextLevel(0, 0, 'resultsteam2')
       return res(true)
     },
 
@@ -146,7 +178,7 @@ var getEmptyGrid = function(initVal) {
         //if (grid[x*gameSize.x+y] != z) {
           grid[x*gameSize.x+y] = z
           req.session.grid = grid
-          console.log(req.session.grid)
+          //console.log(req.session.grid)
           //console.log('grid updated')
           req.session.save(function(err){
             //console.log('Session data saved:', req.session.color) 

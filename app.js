@@ -51,10 +51,12 @@ ss.responders.add(require('ss-heartbeat-responder'), {beatDelay:5, expireDelay:1
 
 ss.api.heartbeat.on('connect', function(session) {
   console.log('client connected')
+  ss.api.publish.channel('results', 'updatePlayers', 1)
 });
 
 ss.api.heartbeat.on('disconnect', function(session) {
   console.log('client disconnected')
+  ss.api.publish.channel('results', 'updatePlayers', -1)
 });
 
 // Code Formatters
