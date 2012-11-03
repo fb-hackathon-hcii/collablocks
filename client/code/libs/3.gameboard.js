@@ -230,12 +230,16 @@ $(document).ready(function() {
 	animate();
 
 	ss.event.on('setBlock', function(options) {
-	  addBlock(options.x, options.y, options.z)
+	  addBlock(options.x, options.y, options.color, options.id)
+	});
+
+	ss.event.on('removeBlock', function(options) {
+	  removeBlock(options.x, options.y, options.id)
 	});
 
 	ss.rpc('game.subscribeView', function(res){
 		console.log('subscribed to updates', res)
 	})
-	
+
 });
 

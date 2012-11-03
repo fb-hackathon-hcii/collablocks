@@ -105,7 +105,12 @@ exports.actions = function(req, res, ss) {
           req.session.save(function(err){
             console.log('Session data saved:', req.session.color) 
           })
-          ss.publish.channel('results', 'setBlock', {x:x, y:y, color: req.session.color, id: req.sessionId})
+          
+          switch (z) {
+            case 0: ss.publish.channel('results', 'removeBlock', {x:x, y:y, id: req.sessionId}); break;
+            case 1: ss.publish.channel('results', 'setBlock', {x:x, y:y, color: req.session.color.replace(/#/gi, '0x'), id: req.sessionId}); break;
+          }
+          
         }
 
         return res(true)
