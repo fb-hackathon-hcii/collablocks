@@ -154,6 +154,44 @@
 				return voxel;
 			}
 			
+			// sorry whoever has to read this =(
+			function removeBlock(x, y, id)
+			{
+				var blockCandidates = grid[x][y];
+				
+				var untouchedBlocks = new Array();
+				var blocksToShift = new Array();
+				
+				var blockFound = false;
+				
+				for (var i = 0; i<blockCandidates.length; i++)
+				{
+					if (blockCandidates[i].id == id)
+					{
+						scene.remove(blockCandidates[i]);
+						blockFound = true;
+					}
+					else if (blockFound)
+					{
+						blocksToShift.push(blockCandidates[i]);
+					}
+					else 
+					{
+						untouchedBlocks.push(blockCandidates[i]);
+					}
+				}
+				
+				// shift blocks down a layer in the scene
+				for (var i = 0; i<blocksToShift.length; i++)
+				{
+					scene.remove(blocksToShift[i]);
+					blocksToShift[i].position.y -= blockSize;
+					blocksToShift[i].updateMatrix();
+					scene.add(blocksToShift[i]);
+				}
+				
+				grid[x][y] = untouchedBlocks.concat(blocksToShift);
+			}
 
 			function save() {
 				window.open( renderer.domElement.toDataURL('image/png'), 'mywindow' );
@@ -197,7 +235,10 @@
 			{
 				addBlock(0,0, 0x00ff80, 0);
 				addBlock(0,0, 0x00ff80, 1);
-				addBlock(15,15, 0x00ff80, 2);
+				addBlock(15,15, 0x000000, 2);
+				addBlock(15,15, 0x06ff80, 5);
+				addBlock(15,15, 0xffffff, 6);
+				addBlock(15,15, 0x0fafaf, 7);
 				addBlock(0,0, 0x00ff80, 3);
 				addBlock(0,0, 0x00ff80, 4);
 				console.log(grid[0][0][0].id);
@@ -206,10 +247,14 @@
 			function testRemoveBlock()
 			{
 				// x, y, id
-				removeBlock(0, 0, 0);
+//				removeBlock(15, 15, 2);
+				removeBlock(15, 15, 6);
+//				removeBlock(15, 15, 5);
 			}
 			
+			testAddEmptyBlock();
 			testAddBlock();
+			testRemoveBlock();
 
 		</script>
 
