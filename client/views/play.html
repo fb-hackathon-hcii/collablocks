@@ -8,13 +8,13 @@
   	<script>
   		$(document).ready(function(){
       
-      var playerColor = '#000000'
-      ss.rpc('game.registerClient', function(response, detail){
-        console.log('registered', response, detail)
-        if(response && detail.color) {
-          playerColor = detail.color
-        }
-      });
+			var playerColor = '#000000'
+			ss.rpc('game.registerClient', function(response, detail){
+				console.log('registered', response, detail)
+				if(response && detail.color) {
+				  playerColor = detail.color
+				}
+			 });
 
   			var tableWidth;
 			var tableHeight;
@@ -26,11 +26,11 @@
 			
 			var clicking = false;
 			
-			$(document).mousedown(function(){
+			$(document).bind( "vmousedown", function(){
 				clicking = true;
 			})
 			
-			$(document).mouseup(function(){
+			$(document).bind( "vmouseup", function(){
 				clicking = false;
 			})
 			
@@ -55,41 +55,41 @@
 // 					
 // 			});
 			
-			$('td').mouseleave(function(){
+			$('td').bind( "vmousedown", function(){
 				var theCell = $(this);
 				theCell.x = theCell.attr('id');
 				theCell.y = theCell.parent().attr('id');
-//				console.log('Clicked: ' + clicking);
-				theCell.toggle(function(){
-					console.log('Clicked: ' + clicking);
-				  var theCell = $(this);
-				  theCell.css({backgroundColor: playerColor});
-				  ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
-				  	
-				}, function() {
-					console.log('Clicked: ' + clicking);
-				  var theCell = $(this);
-				  $(this).css({backgroundColor: ''});
-				  ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 0});
-				 
-				})
+				if (theCell.hasClass('active')){
+						theCell.css('background-color', '');
+						theCell.removeClass('active');
+					  	ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
+
+					}else{
+						theCell.css('background-color', playerColor);
+						theCell.addClass('active');
+					  	ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
+
+					}
+			});
 				
-				}).toggle(function(){
-					console.log('Clicked: ' + clicking);
-				  var theCell = $(this);
-				  theCell.css({backgroundColor: playerColor});
-				  ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
-				  	
-				}, function() {
-					console.log('Clicked: ' + clicking);
-				  var theCell = $(this);
-				  $(this).css({backgroundColor: ''});
-				  ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 0});
-				 
-				})
-					
+			$('td').bind( "vmouseout", function(){
+				var theCell = $(this);
+				theCell.x = theCell.attr('id');
+				theCell.y = theCell.parent().attr('id');
+				if(clicking == true){
+					console.log('Moved in cell: ' + theCell.x + ',' + theCell.y + ' ; clicking: ' + clicking);
+					if (theCell.hasClass('active')){
+						theCell.css('background-color', '');
+						theCell.removeClass('active');
+					}else{
+						theCell.css('background-color', playerColor);
+						theCell.addClass('active');
+					}
+				}
 			});
 			
+			document.body.addEventListener('touchstart', function(e){ e.preventDefault(); });			
+		});
 			
   	</script>
   	<script>
@@ -127,7 +127,7 @@
 			border: 1px solid #ccc;
 		}
 		td.active{
-			background-color: #FF695C;
+			
 		}
 	</style>
 </head>
