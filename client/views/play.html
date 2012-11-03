@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <SocketStream/>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to 3D Collab</title>
+  	<script>
+  		$(document).ready(function(){
+  			var tableWidth;
+			var tableHeight;
+			var numTD = 16;
+			var numTR = 16;
+			createTRs(numTR);
+			createTDs(numTD);
+			setDimensions();
+			
+			$(window).resize(function(){
+				setDimensions();
+			});
+			
+			$('td').click(function(){
+				var theCell = $(this);
+				theCell.x = theCell.attr('id');
+				theCell.y = theCell.parent().attr('id');
+				ss.rpc('game.inputChange', {x: theCell.x, y: theCell.y, value: 1});
+			//	alert('x: ' + theCell.x + ', y: ' + theCell.y);
+			
+				theCell.toggleClass("active");
+				
+			});
+			
+  		});
+  	</script>
+  	<script>
+  		function createTRs(numberTR){
+  			for(var i=numberTR-1;i>=0;i--){
+  				$('table').prepend("<tr id='"+i+"'></tr>");
+  			}
+  		}
+  		function createTDs(numberTD){
+  			for(var i=numberTD-1;i>=0;i--){
+  				$('tr').prepend("<td id='"+i+"'></td>");
+  			}
+  		}
+  		function setDimensions(){
+			tableWidth = $('.container').width();
+			tableHeight = $('.container').height();
+		//	$('td').width(tableWidth/numTD);
+		//	$('tr').height(tableHeight/numTR);	
+		//	$('td').height(tableHeight/numTR);	
+		}
+		
+	</script>
+	<style>		
+		html, body {height: 100%;}
+		.container{
+			height: 80%;
+		}
+		table{
+			width: 100%;
+			height: 100%;
+			border: 1px solid #ccc;
+			border-collapse: collapse;
+		}
+		td{
+			border: 1px solid #ccc;
+		}
+		td.active{
+			background-color: #FF695C;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="container">
+	<table></table>
+	</div>
+	
+<!--
+	<div id="coord-input" class="well well-small" onmousemove="getCoords(event)" onmouseout="clearCoords()">
+	</div>
+	<p>Mouse over the rectangle above, and get the coordinates of your mouse pointer.</p>
+
+	<p id="demo">Coordinates: <span id="xcoord"></span><span id="ycoord"></span><br />
+		Width: <span id="divwidth"></span>, Height: <span id="divheight"></span><br />
+		Scaled X: <span id="scaled-x"></span>, Scaled Y: <span id="scaled-y"></span>
+	</p>
+-->
+</body>
+</html>
