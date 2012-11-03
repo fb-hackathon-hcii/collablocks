@@ -12,18 +12,7 @@
       
       var playerColor = '#000000'
       var team = null
-      ss.rpc('game.registerClient', function(response, detail){
-        console.log('registered', response, detail)
-        if(response && detail.color) {
-          playerColor = detail.color
-          team = detail.team
-          if(team != null) {
-            $('#teamname').text('Team ' + team)
-          }
-        }
-      });
-
- 			var tableWidth;
+      var tableWidth;
 			var tableHeight;
 			var numTD = 16;
 			var numTR = 16;
@@ -31,11 +20,47 @@
 			createTDs(numTD);
 			setDimensions();
 			
+      ss.rpc('game.registerClient', function(response, detail){
+        console.log('registered', response, detail)
+        if(response && detail) {
+          playerColor = detail.color
+          team = detail.team
+          if(team != null) {
+            $('#teamname').text('Team ' + team)
+          }
+          if (detail.grid && detail.grid.length === numTD*numTR) {
+            initializeGrid(detail.grid);
+          }
+          
+        }
+
+      });
+
 			
 			$(window).resize(function(){
 				setDimensions();
 			});
 			
+      var initializeGrid = function(grid) {
+        var c = 0
+          , x = 0
+          , y = 0
+        $('td').each(function(td){
+          //need to flip x,y coords
+          //20 --> 1,4 --> 49
+          x = c % numTD
+          y = Math.floor(c / numTR)
+          c = y * numTR + x
+          cFlipped = x*numTR + y
+          if (grid[cFlipped] === 1) {
+            $(this).css('background-color', playerColor).addClass('active')
+          }
+          c++
+        })
+
+        
+      }
+
 			var clicking = false;
       var toolModeAdd = true;
       

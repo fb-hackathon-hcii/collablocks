@@ -12,6 +12,7 @@
 	
 
 	var blockSize = 50;
+	var blockHeight = 25;
 	var size = 16; 
 
 	var grid = new Array(size);
@@ -85,6 +86,9 @@
 		container.appendChild(renderer.domElement);
 	
 		window.addEventListener( 'resize', onWindowResize, false );
+		
+		// todo: remove, temporary blocks
+		//testAddBlock();
 	}
 	
 	function onWindowResize() {
@@ -107,26 +111,18 @@
 		var voxelBlock = addRawBlock(x, y, z, color, material);
 		voxelBlock.id = id;
 		grid[x][y].push(voxelBlock);
-		
-	}
-	
-	function addEmptyBlock(x, y, z)
-	{
-		var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors } );
-		material.opacity = .1;
-		addRawBlock(x, y, z, 0x000000, material);
 	}
 	
 	function addRawBlock(x, y, z, color, material)
 	{
-		var geometry = new THREE.CubeGeometry( blockSize, blockSize, blockSize);
+		var geometry = new THREE.CubeGeometry( blockSize, blockHeight, blockSize);
 	
 		for ( var i = 0; i < geometry.faces.length; i ++ ) {
 			geometry.faces[ i ].color.setHex( color );
 		}
 	
 		var voxel = new THREE.Mesh( geometry, material );
-		voxel.position.y = blockSize * z + 25;  // this is the z-axis				
+		voxel.position.y = blockHeight * z + 25;  // this is the z-axis				
 		voxel.position.x = blockSize * (x - size/2) + 25;  
 		voxel.position.z = blockSize * (y - size/2) + 25;
 		voxel.matrixAutoUpdate = false;
@@ -203,14 +199,6 @@
 	/*
 	 * TEST FOR ADDING BLOCKS
 	 */
-	function testAddEmptyBlock()
-	{
-		addEmptyBlock(0,0,0);
-		addEmptyBlock(0,0,1);
-		addEmptyBlock(0,0,2);
-		addEmptyBlock(0,0,3);
-		addEmptyBlock(0,0,4);			
-	}
 	 
 	function testAddBlock()
 	{
@@ -218,12 +206,31 @@
 		addBlock(0,0, 0x00ff80, 0);
 		addBlock(0,0, 0x00ff80, 1);
 		addBlock(15,15, 0x000000, 2);
-		addBlock(15,15, 0x06ff80, 5);
 		addBlock(15,15, 0xffffff, 6);
-		addBlock(15,15, 0x0fafaf, 7);
+		addBlock(15,15, 0x000000, 2);
+		addBlock(15,15, 0xffffff, 6);
+		addBlock(15,15, 0x000000, 2);
+		addBlock(15,15, 0xffffff, 6);
+		addBlock(15,15, 0x000000, 2);
+		addBlock(15,15, 0xffffff, 6);
+		addBlock(15,15, 0x000000, 2);
+		addBlock(15,15, 0xffffff, 6);
+		addBlock(15,15, 0x000000, 2);
+		addBlock(15,15, 0xffffff, 6);
+		addBlock(15,15, 0x000000, 2);
+		addBlock(15,15, 0xffffff, 6);
+		addBlock(15,15, 0x000000, 2);
+		addBlock(15,15, 0xffffff, 6);
+		addBlock(15,15, 0x000000, 2);
+		addBlock(15,15, 0xffffff, 6);
+		addBlock(15,15, 0x000000, 2);
+		addBlock(15,15, 0xffffff, 6);
+		addBlock(15,15, 0xffffff, 6);
+
 		addBlock(0,0, 0x00ff80, 3);
 		addBlock(0,0, 0x00ff80, 4);
 	}
+	
 	
 	function testRemoveBlock()
 	{
@@ -243,7 +250,7 @@
 
 		var voxel = new THREE.Mesh( geometry, material );
 		voxel.position.x = blockSize * (x-(size/2)) + 25;
-		voxel.position.y = blockSize * y + 25;
+		voxel.position.y = blockHeight * y + 25;
 		voxel.position.z = blockSize * (z-(size/2)) + 25;
 		voxel.matrixAutoUpdate = false;
 		voxel.updateMatrix();
