@@ -30,7 +30,7 @@ ss.client.define('teamtwo', {
 ss.http.route('/', function(req, res){
   res.serveClient('play');
 });
-ss.http.route('/pirates', function(req, res){
+ss.http.route('/blocks', function(req, res){
   res.serveClient('teamone');
 });
 ss.http.route('/ninjas', function(req, res){
