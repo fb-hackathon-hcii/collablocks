@@ -38,7 +38,7 @@ exports.actions = function(req, res, ss) {
 
   var getEmptyGrid = function() {
     var g = [] 
-    for(var i = 0 i < gameSize.x * gameSize.y i++) {
+    for(var i = 0; i < gameSize.x * gameSize.y; i++) {
       g.push(0)
     }
     return g
@@ -88,17 +88,14 @@ exports.actions = function(req, res, ss) {
           req.session.save(function(err){
             console.log('Session data saved:', req.session.grid) 
           })
-          ss.publish.channel('results', 'setBlock', {x:x, y:y, color: session.color, id: req.sessionId)
+          ss.publish.channel('results', 'setBlock', {x:x, y:y, color: session.color, id: req.sessionId})
         }
 
-          return res(true)
-        } else {
-          return res(false)
-        }
+        return res(true)
+      } else {
+        return res(false)
       }
     }
-
-
-
   }
+
 }
