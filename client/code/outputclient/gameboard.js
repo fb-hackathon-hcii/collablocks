@@ -3,7 +3,7 @@
 	var projector, plane;
 	var mouse2D, mouse3D, ray, theta = 0,
 	isShiftDown = false, isCtrlDown = false,
-	target = new THREE.Vector3( 0, -100, 0 );
+	target = new THREE.Vector3( 0, -400, 0 );
 	var ROLLOVERED;
 
 	var fps = 0
