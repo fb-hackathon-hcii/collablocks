@@ -78,7 +78,10 @@ var getEmptyGrid = function(initVal) {
         break;
     }
 
-    ss.publish.channel(inChannel, 'newLevel', level)
+    if(inChannel == 'resultsteam1')
+      ss.publish.channel(inChannel, 'newLevel', level)
+    else
+      ss.publish.channel(inChannel, 'newLevel2', level)
     return level
   }
 
@@ -120,6 +123,11 @@ var getEmptyGrid = function(initVal) {
 
 
   return {
+
+    activateNextLevel: function(level_num, playernum, inChannel)
+    {
+      getNextLevel(level_num, playernum, inChannel)
+    },
 
     subscribeView: function() {
       req.session.channel.subscribe('results')

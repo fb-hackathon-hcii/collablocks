@@ -244,7 +244,7 @@
 
 	function addMeshBlock(x,y,z, inColor)
 	{
-		var geometry = new THREE.CubeGeometry(blockSize, blockSize, blockSize)
+		var geometry = new THREE.CubeGeometry(blockSize, blockHeight, blockSize)
 
 		var material = new THREE.MeshBasicMaterial( { color: inColor, wireframe: true, transparent: true, wireframeLinewidth: 1 } ); 
 
@@ -295,12 +295,12 @@
 
 	updateLevelName = function(name)
 	{
-		$('#level-name').append(name)
+		$('#level-name').text(name)
 	}
 
 	updateLevelName2 = function(name)
 	{
-		$('#level-name-2').append(name)
+		$('#level-name-2').text(name)
 	}
 
 	updateLevelProgress = function(progress)
@@ -324,6 +324,15 @@
 			var num = val + delta
 			window.players = num
 			$('#active-players').text(num.toString())
+
+			if(num == 1)
+			{
+				//activate the next level
+				if(window.team == 'Pirates')
+					ss.rpc('game.activateNextLevel', 1, num, 'resultsteam1')
+				else
+					ss.rpc('game.activateNextLevel', 1, num, 'resultsteam2')
+			}
 		}
 		else
 		{
@@ -338,7 +347,7 @@ $(document).ready(function() {
 	init();
 	animate();
 
-	var team = $(document)[0]['title']
+	window.team = $(document)[0]['title']
 	window.players = 0
 	/*
 	if(team == 'Pirates')
@@ -370,12 +379,19 @@ $(document).ready(function() {
 
 	ss.event.on('newLevel', function(level) {
 		console.log('new level!', level.name)
-		if (!window.level) {		
-			window.level = level
-			visualizeLevel()
-			updateLevelName(level.name)
-			updateLevelProgress(0)
-		}
+		window.level = level
+		visualizeLevel()
+		updateLevelName(level.name)
+		updateLevelProgress(0)
+	})
+
+	ss.event.on('newLevel2', function(level) {
+		console.log('new level!', level.name)
+		window.level = level
+		console.log(level)
+		visualizeLevel()
+		updateLevelName2(level.name)
+		updateLevelProgress2(0)
 	})
 
 	ss.rpc('game.subscribeView', function(res){
