@@ -3,7 +3,7 @@
 	var projector, plane;
 	var mouse2D, mouse3D, ray, theta = 0,
 	isShiftDown = false, isCtrlDown = false,
-	target = new THREE.Vector3( 0, -100, 0 );
+	target = new THREE.Vector3( 0, -400, 0 );
 	var ROLLOVERED;
 
 	var fps = 0
@@ -332,24 +332,6 @@
 			}
 		}
 
-			/*
-
-			x = i%xbound
-
-			if(prvx == x)
-				z=0
-			else
-				z++
-
-			for(var j=0;j<levelData[i];j++)
-			{
-				console.log(x)
-				addMeshBlock(x,j,z, levelColor)	
-			}
-
-			prvx = x
-		*/
-
 	}
 
 	updateLevelName = function(name)
@@ -357,10 +339,39 @@
 		$('#level-name').append(name)
 	}
 
+	updateLevelName2 = function(name)
+	{
+		$('#level-name-2').append(name)
+	}
+
 	updateLevelProgress = function(progress)
 	{
 
 		$('#level-complete').css('width', progress + '%')
+	}
+
+	updateLevelProgress2 = function(progress)
+	{
+
+		$('#level-complete-2').css('width', progress + '%')
+	}
+
+	updateActivePlayers = function(delta)
+	{
+		var val = window.players
+		console.log(val, delta)	
+		if((val+delta) >= 0)
+		{
+			var num = val + delta
+			window.players = num
+			$('#active-players').text(num.toString())
+		}
+		else
+		{
+			var num = 0
+			window.players = 0
+			$('#active-players').text(num.toString())
+		}
 	}
 	
 		
@@ -368,9 +379,22 @@ $(document).ready(function() {
 	init();
 	animate();
 
-	ss.rpc('game.subscribeTeam1', function(res){
+	var team = $(document)[0]['title']
+	
+	/*
+	if(team == 'Pirates')
+	{
+		ss.rpc('game.subscribeTeam1', function(res){
 		console.log('subscribed to team1 updates', res)
-	})
+		})
+	}
+	else if(team == 'Ninjas')
+	{
+		ss.rpc('game.subscribeTeam2', function(res){
+		console.log('subscribed to team2 updates', res)
+		})	
+	}
+	*/
 
 	ss.event.on('setBlock', function(options) {
 		console.log('on setBlock', options)
@@ -391,12 +415,18 @@ $(document).ready(function() {
 			window.level = level
 			visualizeLevel()
 			updateLevelName(level.name)
-			updateLevelProgress(10)
+			updateLevelProgress(0)
 		}
 	})
 
 	ss.rpc('game.subscribeView', function(res){
 		console.log('subscribed to updates', res)
+	})
+
+	ss.event.on('updatePlayers', function(delta) {
+		console.log('updatePlayers event fired')
+		console.log(delta)
+		updateActivePlayers(delta)
 	})
 
 	/*
@@ -405,6 +435,8 @@ $(document).ready(function() {
 		fps=0
 	}, 1000)
 	*/
+
+
 	
 
 });

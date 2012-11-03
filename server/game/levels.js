@@ -1,6 +1,28 @@
+exports.generateTrainingJSON = function(ingridx, ingridz, players)
+{
+  var outData = []
+
+  for(var x=0; x<ingridx; x++)
+  {
+    for(var z=0;z<ingridz; z++)
+    {
+      outData.push(0)
+    }
+  }
+
+  var jsonver = {
+    name: 'Training',
+    bounds: {x:ingridx, y:ingridz, v:players},
+    data: outData
+  }
+
+  return jsonver
+}
+
 exports.generateLevelOneJSON = function(ingridx, ingridz, players)
 {
   var outData = []
+  /*
   var data = []
   for(var x=0; x<ingridx; x++)
   {
@@ -9,6 +31,7 @@ exports.generateLevelOneJSON = function(ingridx, ingridz, players)
     {
       var outData = []
       //var data = []
+      */
       for(var x=0; x<ingridx; x++)
       {
         //data[x] = []
@@ -28,9 +51,6 @@ exports.generateLevelOneJSON = function(ingridx, ingridz, players)
         }
       }
 
-    }
-  }
-
 
   var jsonver = {
     name: 'level ONE',
@@ -41,7 +61,7 @@ exports.generateLevelOneJSON = function(ingridx, ingridz, players)
   return jsonver
 }
 
-exports.generateLevelTwo = function(xmax, ymax, zmax)
+exports.generateLevelTwoJSON = function(xmax, ymax, zmax)
 {
   var outData = []
   for(var i=0; i <xmax*ymax; i++)
