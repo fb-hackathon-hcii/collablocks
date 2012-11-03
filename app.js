@@ -18,6 +18,20 @@ ss.client.define('play', {
   tmpl: '*'
 });
 
+ss.client.define('teamone', {
+  view: 'teamone.html',
+  css:  ['libs/', 'app.styl'],
+  code: ['libs/', 'app'],
+  tmpl: '*'
+});
+
+ss.client.define('teamtwo', {
+  view: 'teamtwo.html',
+  css:  ['libs/', 'app.styl'],
+  code: ['libs/', 'app'],
+  tmpl: '*'
+});
+
 
 // Serve this client on the root URL
 ss.http.route('/', function(req, res){
@@ -27,6 +41,16 @@ ss.http.route('/', function(req, res){
 // Serve this client on the root URL
 ss.http.route('/play', function(req, res){
   res.serveClient('play');
+});
+
+// Serve this client on the root URL
+ss.http.route('/android', function(req, res){
+  res.serveClient('teamone');
+});
+
+// Serve this client on the root URL
+ss.http.route('/ios', function(req, res){
+  res.serveClient('teamtwo');
 });
 
 // Code Formatters
