@@ -61,7 +61,7 @@ exports.generateLevelOneJSON = function(ingridx, ingridz, players)
   return jsonver
 }
 
-exports.generateLevelTwo = function(xmax, ymax, zmax)
+exports.generateLevelTwoJSON = function(xmax, ymax, zmax)
 {
   var outData = []
   for(var i=0; i <xmax*ymax; i++)

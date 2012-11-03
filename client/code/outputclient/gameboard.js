@@ -298,10 +298,21 @@
 		$('#level-name').append(name)
 	}
 
+	updateLevelName2 = function(name)
+	{
+		$('#level-name-2').append(name)
+	}
+
 	updateLevelProgress = function(progress)
 	{
 
 		$('#level-complete').css('width', progress + '%')
+	}
+
+	updateLevelProgress2 = function(progress)
+	{
+
+		$('#level-complete-2').css('width', progress + '%')
 	}
 
 	updateActivePlayers = function(delta)
@@ -329,6 +340,7 @@ $(document).ready(function() {
 
 	var team = $(document)[0]['title']
 	
+	/*
 	if(team == 'Pirates')
 	{
 		ss.rpc('game.subscribeTeam1', function(res){
@@ -341,6 +353,7 @@ $(document).ready(function() {
 		console.log('subscribed to team2 updates', res)
 		})	
 	}
+	*/
 
 	ss.event.on('setBlock', function(options) {
 		console.log('on setBlock', options)
@@ -361,7 +374,7 @@ $(document).ready(function() {
 			window.level = level
 			visualizeLevel()
 			updateLevelName(level.name)
-			updateLevelProgress(10)
+			updateLevelProgress(0)
 		}
 	})
 
@@ -381,6 +394,8 @@ $(document).ready(function() {
 		fps=0
 	}, 1000)
 	*/
+
+
 	
 
 });
