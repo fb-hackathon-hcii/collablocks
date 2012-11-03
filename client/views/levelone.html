@@ -25,9 +25,19 @@
 			isShiftDown = false, isCtrlDown = false,
 			target = new THREE.Vector3( 0, 200, 0 );
 			var ROLLOVERED;
-
+			
 			var blockSize = 50;
+			var size = 16; 
 
+			var grid = new Array(size);
+			for (var i = 0; i <= size; i++)
+			{
+				grid[i] = new Array(size);
+				for (var k = 0; k < size; k++)
+				{
+					grid[i][k] = new Array();
+				}
+			}
 
 			init();
 			animate();
@@ -37,58 +47,30 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
-
-
 				camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
 				camera.position.y = 800;
 
 				scene = new THREE.Scene();
 
-				// Grid
-
-				var width = 300;
-				var length = 400;
-
+				// Grid				
 				var geometry = new THREE.Geometry();
-
-				for ( var i = - width; i <= width; i += blockSize)
+				
+				var coordSize = size/2*blockSize;
+				
+				for ( var i = - coordSize; i <= coordSize; i += blockSize ) 
 				{
-					for (var k = - length; k <= length; k += blockSize)
-					{
-						// i think this is wrong, but it works. sorry
-						
-						geometry.vertices.push( new THREE.Vector3( - width, 0, i ) );
-						geometry.vertices.push( new THREE.Vector3(   width, 0, i ) );
+					geometry.vertices.push( new THREE.Vector3( - coordSize, 0, i ) );
+					geometry.vertices.push( new THREE.Vector3(   coordSize, 0, i ) );
 
-						geometry.vertices.push( new THREE.Vector3( i, 0, - width ) );
-						geometry.vertices.push( new THREE.Vector3( i, 0, width ) );
-
-						geometry.vertices.push( new THREE.Vector3(- length, 0, k ) );
-						geometry.vertices.push( new THREE.Vector3( length, 0,   k ) );					
-
-						geometry.vertices.push( new THREE.Vector3( k, 0, - length ) );
-						geometry.vertices.push( new THREE.Vector3( k, 0,   length ) );					
-					}
+					geometry.vertices.push( new THREE.Vector3( i, 0, - coordSize ) );
+					geometry.vertices.push( new THREE.Vector3( i, 0,   coordSize ) );
 				}
-/*
-				for ( var i = - size; i <= size; i += blockSize ) 
-				{
 
-					geometry.vertices.push( new THREE.Vector3( - size, 0, i ) );
-					geometry.vertices.push( new THREE.Vector3(   size, 0, i ) );
-
-					geometry.vertices.push( new THREE.Vector3( i, 0, - size ) );
-					geometry.vertices.push( new THREE.Vector3( i, 0,   size ) );
-
-				}
-*/
 				var material = new THREE.LineBasicMaterial( { color: 0x000000, opacity: 0.2 } );
 
 				var line = new THREE.Line( geometry, material );
 				line.type = THREE.LinePieces;
 				scene.add( line );
-
-				//
 
 				projector = new THREE.Projector();
 
@@ -125,7 +107,6 @@
 				container.appendChild(renderer.domElement);
 
 				window.addEventListener( 'resize', onWindowResize, false );
-
 			}
 
 			function onWindowResize() {
@@ -138,10 +119,13 @@
 			}
 
 
-			function addBlock(x, y, z, color)
+			function addBlock(x, y, color, id)
 			{
 				var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors } );
-				addRawBlock(x, y, z, color, material);
+				var z = grid[x][y].length;
+				var voxelBlock = addRawBlock(x, y, z, color, material);
+				voxelBlock.id = id;
+				grid[x][y].push(voxelBlock);
 			}
 			
 			function addEmptyBlock(x, y, z)
@@ -161,13 +145,15 @@
 				}
 
 				var voxel = new THREE.Mesh( geometry, material );
-				voxel.position.x = blockSize * x + 25;
-				voxel.position.y = blockSize * y + 25;
-				voxel.position.z = blockSize * z + 25;
+				voxel.position.y = blockSize * z + 25;  // this is the z-axis				
+				voxel.position.x = blockSize * (x - size/2) + 25;  
+				voxel.position.z = blockSize * (y - size/2) + 25;
 				voxel.matrixAutoUpdate = false;
 				voxel.updateMatrix();
 				scene.add( voxel );
+				return voxel;
 			}
+			
 
 			function save() {
 				window.open( renderer.domElement.toDataURL('image/png'), 'mywindow' );
@@ -198,20 +184,29 @@
 			/*
 			 * TEST FOR ADDING BLOCKS
 			 */
+			function testAddEmptyBlock()
+			{
+				addEmptyBlock(0,0,0);
+				addEmptyBlock(0,0,1);
+				addEmptyBlock(0,0,2);
+				addEmptyBlock(0,0,3);
+				addEmptyBlock(0,0,4);			
+			}
+			 
 			function testAddBlock()
 			{
-				addBlock(7,0,0, 0x00ff80);
-				addBlock(0,0,7, 0x00ff80);
-				addBlock(-7,0,0, 0x00ff80);
-				addBlock(0,0,-7, 0x00ff80);
-				addEmptyBlock(0,0,0);
-				addEmptyBlock(0,1,0);
-				addEmptyBlock(0,2,0);
-				addEmptyBlock(0,3,0);
-				addEmptyBlock(0,4,0);
-				addBlock(0,0,0, 0x00ff80);
-				addBlock(0,1,0, 0x00ff80);
-
+				addBlock(0,0, 0x00ff80, 0);
+				addBlock(0,0, 0x00ff80, 1);
+				addBlock(15,15, 0x00ff80, 2);
+				addBlock(0,0, 0x00ff80, 3);
+				addBlock(0,0, 0x00ff80, 4);
+				console.log(grid[0][0][0].id);
+			}
+			
+			function testRemoveBlock()
+			{
+				// x, y, id
+				removeBlock(0, 0, 0);
 			}
 			
 			testAddBlock();
