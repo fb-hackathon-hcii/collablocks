@@ -26,7 +26,18 @@ ss.client.define('teamtwo', {
   tmpl: '*'
 });
 
+ss.client.define('admin', {
+  view: 'admin.html',
+  css:  ['libs/', 'app.styl'],
+  code: ['libs/', 'outputclient'],
+  tmpl: '*'
+});
+
 // Serve this client on the root URL
+ss.http.route('/admin', function(req, res){
+  res.serveClient('admin');
+});
+
 ss.http.route('/', function(req, res){
   res.serveClient('play');
 });
@@ -36,6 +47,7 @@ ss.http.route('/blocks', function(req, res){
 ss.http.route('/ninjas', function(req, res){
   res.serveClient('teamtwo');
 });
+
 
 //console.log(ss.events)
 
