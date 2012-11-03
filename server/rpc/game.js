@@ -71,7 +71,7 @@ exports.actions = function(req, res, ss) {
 
   var getNewLevel = function() {
     //TODO
-    var playernum = 10
+    var playernum = 4
     console.log(levelGenerator)
     var level = levelGenerator.generateLevelTwo(gameSize.x, gameSize.y, playernum)
     ss.publish.channel('results', 'newLevel', level)
