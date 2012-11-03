@@ -17,7 +17,7 @@ ss.http.route('/', function(req, res){
 });
 
 // Define a single-page client called 'main'
-ss.client.define('levelone', {
+ss.client.define('results', {
   view: 'levelone.html',
   css:  ['libs/', 'app.styl'],
   code: ['libs/', 'app'],
@@ -25,8 +25,8 @@ ss.client.define('levelone', {
 });
 
 // Serve this client on the root URL
-ss.http.route('/levelone', function(req, res){
-  res.serveClient('levelone');
+ss.http.route('/results', function(req, res){
+  res.serveClient('results');
 });
 
 
@@ -35,6 +35,8 @@ ss.client.formatters.add(require('ss-stylus'));
 
 // Use server-side compiled Hogan (Mustache) templates. Others engines available
 ss.client.templateEngine.use(require('ss-hogan'));
+
+ss.session.store.use('redis');
 
 // Minimize and pack assets if you type: SS_ENV=production node app.js
 if (ss.env === 'production') ss.client.packAssets();
@@ -45,3 +47,9 @@ server.listen(3000);
 
 // Start SocketStream
 ss.start(server);
+
+/*
+setInterval(function(){
+  ss.api.publish.all('setBlock', {x:Math.floor(Math.random()*15-8), y:Math.floor(Math.random()*10), z:Math.floor(Math.random()*15-8)}); 
+}, 10)
+*/
