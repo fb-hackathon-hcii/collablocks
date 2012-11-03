@@ -25,19 +25,12 @@
 			isShiftDown = false, isCtrlDown = false,
 			target = new THREE.Vector3( 0, 200, 0 );
 			var ROLLOVERED;
-			
-			var blockSize = 50;
-			var size = 16; 
 
-			var grid = new Array(size);
-			for (var i = 0; i <= size; i++)
-			{
-				grid[i] = new Array(size);
-				for (var k = 0; k < size; k++)
-				{
-					grid[i][k] = new Array();
-				}
-			}
+
+			//world vars
+			var size = 400
+			var blockSize,step
+			var gridx = gridz = 8
 
 			init();
 			animate();
@@ -47,23 +40,34 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
+				var info = document.createElement( 'div' );
+				info.style.position = 'absolute';
+				info.style.top = '10px';
+				info.style.width = '100%';
+				info.style.textAlign = 'center';
+				info.innerHTML = '<a href="http://threejs.org" target="_blank">three.js</a> - voxel painter<br><strong>click</strong>: add voxel, <strong>control + click</strong>: remove voxel, <strong>shift</strong>: rotate, <a href="javascript:save();return false;">save .png</a>';
+				container.appendChild( info );
+
 				camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
 				camera.position.y = 800;
 
 				scene = new THREE.Scene();
 
-				// Grid				
-				var geometry = new THREE.Geometry();
-				
-				var coordSize = size/2*blockSize;
-				
-				for ( var i = - coordSize; i <= coordSize; i += blockSize ) 
-				{
-					geometry.vertices.push( new THREE.Vector3( - coordSize, 0, i ) );
-					geometry.vertices.push( new THREE.Vector3(   coordSize, 0, i ) );
+				// Grid
 
-					geometry.vertices.push( new THREE.Vector3( i, 0, - coordSize ) );
-					geometry.vertices.push( new THREE.Vector3( i, 0,   coordSize ) );
+				blockSize = size/gridx
+				step = size/gridx
+
+				var geometry = new THREE.Geometry();
+
+				for ( var i = - size; i <= size; i += step ) {
+
+					geometry.vertices.push( new THREE.Vector3( - size, 0, i ) );
+					geometry.vertices.push( new THREE.Vector3(   size, 0, i ) );
+
+					geometry.vertices.push( new THREE.Vector3( i, 0, - size ) );
+					geometry.vertices.push( new THREE.Vector3( i, 0,   size ) );
+
 				}
 
 				var material = new THREE.LineBasicMaterial( { color: 0x000000, opacity: 0.2 } );
@@ -71,6 +75,8 @@
 				var line = new THREE.Line( geometry, material );
 				line.type = THREE.LinePieces;
 				scene.add( line );
+
+				// plane
 
 				projector = new THREE.Projector();
 
@@ -101,12 +107,13 @@
 				directionalLight.position.normalize();
 				scene.add( directionalLight );
 
-				renderer = new THREE.CanvasRenderer();
+				renderer = new THREE.WebGLRenderer({antialias: true});
 				renderer.setSize( window.innerWidth, window.innerHeight );
 
 				container.appendChild(renderer.domElement);
 
 				window.addEventListener( 'resize', onWindowResize, false );
+
 			}
 
 			function onWindowResize() {
@@ -119,155 +126,44 @@
 			}
 
 
-			function addBlock(x, y, color, id)
-			{
-				var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors } );
-				var z = grid[x][y].length;
-				var voxelBlock = addRawBlock(x, y, z, color, material);
-				voxelBlock.id = id;
-				grid[x][y].push(voxelBlock);
-			}
-			
-			function addEmptyBlock(x, y, z)
-			{
-				var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors } );
-				material.opacity = .1;
-
-				addRawBlock(x, y, z, 0x000000, material);
-			}
-			
-			function addRawBlock(x, y, z, color, material)
+			function addBlock(x, y, z, inColor)
 			{
 				var geometry = new THREE.CubeGeometry( blockSize, blockSize, blockSize);
 
 				for ( var i = 0; i < geometry.faces.length; i ++ ) {
-					geometry.faces[ i ].color.setHex( color );
+					geometry.faces[ i ].color.setHex( inColor );
 				}
+
+				var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors } );
 
 				var voxel = new THREE.Mesh( geometry, material );
-				voxel.position.y = blockSize * z + 25;  // this is the z-axis				
-				voxel.position.x = blockSize * (x - size/2) + 25;  
-				voxel.position.z = blockSize * (y - size/2) + 25;
+				voxel.position.x = blockSize * x + 25;
+				voxel.position.y = blockSize * y + 25;
+				voxel.position.z = blockSize * z + 25;
 				voxel.matrixAutoUpdate = false;
 				voxel.updateMatrix();
+				console.log(voxel);
 				scene.add( voxel );
-				return voxel;
 			}
-			
-			// sorry whoever has to read this =(
-			function removeBlock(x, y, id)
+
+			function addMeshBlock(x,y,z, inColor)
 			{
-				var blockCandidates = grid[x][y];
-				
-				var untouchedBlocks = new Array();
-				var blocksToShift = new Array();
-				
-				var blockFound = false;
-				
-				for (var i = 0; i<blockCandidates.length; i++)
-				{
-					if (blockCandidates[i].id == id)
-					{
-						scene.remove(blockCandidates[i]);
-						blockFound = true;
-					}
-					else if (blockFound)
-					{
-						blocksToShift.push(blockCandidates[i]);
-					}
-					else 
-					{
-						untouchedBlocks.push(blockCandidates[i]);
-					}
-				}
-				
-				// shift blocks down a layer in the scene
-				for (var i = 0; i<blocksToShift.length; i++)
-				{
-					scene.remove(blocksToShift[i]);
-					blocksToShift[i].position.y -= blockSize;
-					blocksToShift[i].updateMatrix();
-					scene.add(blocksToShift[i]);
-				}
-				
-				grid[x][y] = untouchedBlocks.concat(blocksToShift);
-			}
+				var geometry = new THREE.CubeGeometry(blockSize, blockSize, blockSize)
 
-			function save() {
-				window.open( renderer.domElement.toDataURL('image/png'), 'mywindow' );
-			}
+				var material = new THREE.MeshBasicMaterial( { color: inColor, wireframe: true, transparent: true } ); 
 
-
-			function animate() {
-				requestAnimationFrame( animate );
-				render();
-			}
-
-			function render() {
-
-				if ( isShiftDown ) {
-
-					theta += mouse2D.x * 3;
-
-				}
-
-				camera.position.x = 1400 * Math.sin( theta * Math.PI / 360 );
-				camera.position.z = 1400 * Math.cos( theta * Math.PI / 360 );
-				camera.lookAt( target );
-
-				renderer.render( scene, camera );
+				var voxel = new THREE.Mesh( THREE.GeometryUtils.clone(geometry), material );
+				voxel.position.x = blockSize * x + 25;
+				voxel.position.y = blockSize * y + 25;
+				voxel.position.z = blockSize * z + 25;
+				voxel.matrixAutoUpdate = false;
+				voxel.updateMatrix();
+				console.log(voxel);
+				scene.add( voxel );
 
 			}
 
-			/*
-			 * TEST FOR ADDING BLOCKS
-			 */
-			function testAddEmptyBlock()
-			{
-				addEmptyBlock(0,0,0);
-				addEmptyBlock(0,0,1);
-				addEmptyBlock(0,0,2);
-				addEmptyBlock(0,0,3);
-				addEmptyBlock(0,0,4);			
-			}
-			 
-			function testAddBlock()
-			{
-				addBlock(0,0, 0x00ff80, 0);
-				addBlock(0,0, 0x00ff80, 1);
-				addBlock(15,15, 0x000000, 2);
-				addBlock(15,15, 0x06ff80, 5);
-				addBlock(15,15, 0xffffff, 6);
-				addBlock(15,15, 0x0fafaf, 7);
-				addBlock(0,0, 0x00ff80, 3);
-				addBlock(0,0, 0x00ff80, 4);
-				console.log(grid[0][0][0].id);
-			}
-			
-			function testRemoveBlock()
-			{
-				// x, y, id
-//				removeBlock(15, 15, 2);
-				removeBlock(15, 15, 6);
-//				removeBlock(15, 15, 5);
-			}
-			
-			testAddEmptyBlock();
-			testAddBlock();
-			testRemoveBlock();
-			createLevelOne()
-
-
-			ss.event.on('setBlock', function(options) {
-			  addBlock(options.x, options.y, options.z)
-			});
-
-			ss.rpc('game.subscribeView', function(res){
-				console.log('subscribed to updates', res)
-			})
-
-			//wireframe levels functions
-
+			// array based inclusion
 			function addMeshBlockArray(x,y,z, inColor)
 			{
 				var geometry = new THREE.CubeGeometry(blockSize, blockSize, blockSize)
@@ -301,9 +197,51 @@
 					return 0
 			}
 
+			// random noise level generator
+			function createLevel(ingridx,ingridz,players)
+			{
+				var levelColor = createRandomColor()
+				for(var i=0; i<players; i++)
+				{
+					var levelArray = []
+					//iterate through each floor (one floor == one player)
+					for(var x=0;x<(2*ingridx); x++)
+					{
+						levelArray[x] = []
+ 						for(var z=0;z<(2*ingridz); z++)
+						{
+							if(coinToss())
+							{
+								if(i!=0 && levelArray[x][z] == 1)
+								{
+									addMeshBlockArray(x,i,z, levelColor)
+									levelArray[x][z] = 1	
+								}
+								else
+								{
+									addMeshBlockArray(x,i,z, levelColor)
+									levelArray[x][z] = 1
+								}
+							}
+								
+						}
+					}
+				}
+			}
+
 			function createLevelOne(ingridx, ingridz, players)
 			{
 				var levelColor = createRandomColor()
+				/*
+				for(var i=0;i<players;i++)
+				{
+					addMeshBlockArray(ingridx/2,i,ingridz/2, levelColor)
+					addMeshBlockArray(ingridx/2-1,i,ingridz/2, levelColor)
+
+					addMeshBlockArray(ingridx/2,i,ingridz/2-1, levelColor)
+					addMeshBlockArray(ingridx/2-1,i,ingridz/2-1, levelColor)
+				}
+				*/
 
 				var flag=0
 				var data = []
@@ -358,9 +296,49 @@
 					bounds: {x:ingridx, y:ingridz, v:players},
 					data: outData
 				}
-
-				return jsonver
 			}
+
+			function save() {
+				window.open( renderer.domElement.toDataURL('image/png'), 'mywindow' );
+			}
+
+
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+
+			function render() {
+
+				if ( isShiftDown ) {
+
+					theta += mouse2D.x * 3;
+
+				}
+
+				camera.position.x = 1400 * Math.sin( theta * Math.PI / 360 );
+				camera.position.z = 1400 * Math.cos( theta * Math.PI / 360 );
+				camera.lookAt( target );
+
+				renderer.render( scene, camera );
+
+			}
+
+			/*
+			 * TEST FOR ADDING BLOCKS
+			 */
+			function testAddBlock()
+			{
+				//addMeshBlock(0,0,0, createRandomColor())
+				//addMeshBlockArray(0,0,0, createRandomColor())
+				//addMeshBlockArray(0,1,1, createRandomColor())
+				createLevelOne(gridx*2, gridz*2, 4)
+			}
+			testAddBlock();
+
+			ss.event.on('updateCanvas', function(x,y,z) {
+				addBlock(x,y,z, 0x00ffff)
+			})
 
 		</script>
 
