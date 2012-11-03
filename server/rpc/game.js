@@ -54,9 +54,6 @@ exports.actions = function(req, res, ss) {
     return Math.max(0, 1 - deviations/levelTotal)
   }
 
-  var gameSize = {x:15, y:15}
-  var teamNames = ['Banana', 'Strawberry']
-
   /*
   var levels = [
     { name: 'the four towers',
@@ -64,6 +61,17 @@ exports.actions = function(req, res, ss) {
       data: [0, 5, 6, 6, ... ]
     }
   ]*/
+
+  var getNewLevel = function(level) {
+    ss.publish.channel('results', 'newLevel', {name: 'the four towers',
+      bounds: {x:15, y:15, v:10},
+      data: [0, 5, 6, 6 ]})
+  }
+
+
+  /* CONST */
+  var gameSize = {x:15, y:15}
+  var teamNames = ['Banana', 'Strawberry']
 
   return {
 
