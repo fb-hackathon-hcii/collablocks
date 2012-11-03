@@ -261,6 +261,10 @@
 			  addBlock(options.x, options.y, options.z)
 			});
 
+			ss.rpc('game.subscribeView', function(res){
+				console.log('subscribed to updates', res)
+			})
+
 		</script>
 
 	</body>

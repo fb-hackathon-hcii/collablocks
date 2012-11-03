@@ -7,7 +7,16 @@
     <title>Welcome to 3D Collab</title>
   	<script>
   		$(document).ready(function(){
-  			var tableWidth;
+      
+      var playerColor = '#000000'
+      ss.rpc('game.registerClient', function(response, detail){
+        console.log('registered', response, detail)
+        if(response && detail.color) {
+          playerColor = detail.color
+        }
+      });
+
+  		var tableWidth;
 			var tableHeight;
 			var numTD = 16;
 			var numTR = 16;
@@ -23,12 +32,20 @@
 				var theCell = $(this);
 				theCell.x = theCell.attr('id');
 				theCell.y = theCell.parent().attr('id');
-				ss.rpc('game.inputChange', {x: theCell.x, y: theCell.y, value: 1});
+				
 			//	alert('x: ' + theCell.x + ', y: ' + theCell.y);
 			
-				theCell.toggleClass("active");
 				
-			});
+
+			}).toggle(function(){
+          var theCell = $(this)
+          theCell.css({backgroundColor: playerColor})
+          ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
+        }, function() {
+          var theCell = $(this)
+          $(this).css({backgroundColor: ''})
+          ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 0});
+        })
 			
   		});
   	</script>

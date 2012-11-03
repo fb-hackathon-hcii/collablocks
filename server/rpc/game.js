@@ -33,7 +33,7 @@ exports.actions = function(req, res, ss) {
           g = hue2rgb(p, q, h)
           b = hue2rgb(p, q, h - 1/3)
       }
-      return '#' + (r*255).toString(16) + (g*255).toString(16) + (b * 255).toString(16)
+      return '#' + Math.floor(r*255).toString(16) + Math.floor(g*255).toString(16) + Math.floor(b * 255).toString(16)
   }
 
   var getEmptyGrid = function() {
@@ -66,29 +66,36 @@ exports.actions = function(req, res, ss) {
 
   return {
 
+    subscribeView: function() {
+      req.session.channel.subscribe('results')
+      return res(true)
+    },
+
     registerClient: function() {
       var color = hslToRgb(Math.random(), 0.8, 0.8)
       req.session.color = color
-      req.save(function(err){
+      req.session.save(function(err){
         return res(true, {color: color})  
       })
 
     },
 
     inputChange: function(data) {
-      if (req.session && data && data.x && data.y && data.z) {
+      console.log(data)
+      if (req.session && data && data.x && data.y && data.value) {
         var grid = req.session.grid || getEmptyGrid()
 
-        var x = Max(0, Math.min(gameSize.x-1, Math.floor(data.x)))
-        var y = Max(0, Math.min(gameSize.y-1, Math.floor(data.y)))
-        var z = Max(0, Math.min(1, Math.floor(data.z)))
+        var x = Math.max(0, Math.min(gameSize.x-1, Math.floor(data.x)))
+        var y = Math.max(0, Math.min(gameSize.y-1, Math.floor(data.y)))
+        var z = Math.max(0, Math.min(1, Math.floor(data.value)))
 
         if (grid[x*gameSize.x+y-1] != z) {
           grid[x*gameSize.x+y-1] = z
+          req.session.grid = grid
           req.session.save(function(err){
             console.log('Session data saved:', req.session.grid) 
           })
-          ss.publish.channel('results', 'setBlock', {x:x, y:y, color: session.color, id: req.sessionId})
+          ss.publish.channel('results', 'setBlock', {x:x, y:y, color: req.session.color, id: req.sessionId})
         }
 
         return res(true)
