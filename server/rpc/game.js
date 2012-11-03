@@ -73,7 +73,7 @@ exports.actions = function(req, res, ss) {
     //TODO
     var playernum = 4
     console.log(levelGenerator)
-    var level = levelGenerator.generateLevelTwo(gameSize.x, gameSize.y, playernum)
+    var level = levelGenerator.generateLevelOneJSON(gameSize.x, gameSize.y, playernum)
     ss.publish.channel('results', 'newLevel', level)
     return level
   }
@@ -121,9 +121,10 @@ exports.actions = function(req, res, ss) {
         var y = Math.max(0, Math.min(gameSize.y-1, Math.floor(data.y)))
         var z = Math.max(0, Math.min(1, Math.floor(data.value)))
 
-        if (grid[x*gameSize.x+y-1] != z) {
-          grid[x*gameSize.x+y-1] = z
+        //if (grid[x*gameSize.x+y] != z) {
+          grid[x*gameSize.x+y] = z
           req.session.grid = grid
+          console.log('grid updated')
           req.session.save(function(err){
             //console.log('Session data saved:', req.session.color) 
           })
@@ -133,7 +134,7 @@ exports.actions = function(req, res, ss) {
             case 1: ss.publish.channel('results', 'setBlock', {x:x, y:y, color: req.session.color.replace(/#/gi, '0x'), id: req.sessionId}); break;
           }
           
-        }
+        //}
 
         return res(true)
       } else {

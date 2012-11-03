@@ -3,7 +3,7 @@
   <head>
     <SocketStream/>
     <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0">
     <title>Welcome to 3D Collab</title>
   	<script>
   		$(document).ready(function(){
@@ -29,71 +29,46 @@
 			createTDs(numTD);
 			setDimensions();
 			
-			var clicking = false;
-			
-			$(document).bind( "vmousedown", function(){
-				clicking = true;
-			})
-			
-			$(document).bind( "vmouseup", function(){
-				clicking = false;
-			})
 			
 			$(window).resize(function(){
 				setDimensions();
 			});
 			
-// 			$('td').click(function(){
-// 				var theCell = $(this);
-// 				theCell.x = theCell.attr('id');
-// 				theCell.y = theCell.parent().attr('id');
-// 	
-// 				}).toggle(function(){
-// 				  var theCell = $(this)
-// 				  theCell.css({backgroundColor: playerColor})
-// 				  ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
-// 				}, function() {
-// 				  var theCell = $(this)
-// 				  $(this).css({backgroundColor: ''})
-// 				  ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 0});
-// 				})
-// 					
-// 			});
-			
-      /*
-			$('td').bind( "vmousedown", function(){
-				var theCell = $(this);
-				theCell.x = theCell.attr('id');
-				theCell.y = theCell.parent().attr('id');
-				if (theCell.hasClass('active')){
-						theCell.css('background-color', '');
-						theCell.removeClass('active');
-					  //ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 0});
+			var clicking = false;
+      var toolModeAdd = true;
+      
+      var checkCell = function(cellElement) {
+          
+          var cell = $(cellElement)
+          var x = cell.attr('id');
+          var y = cell.parent().attr('id');
+          
+          if (!toolModeAdd && cell.hasClass('active')){
+            cell.css('background-color', '');
+            cell.removeClass('active');
+            ss.rpc('game.inputChange', {x: x, y: y, value: 0});
+          }else if (toolModeAdd && !cell.hasClass('active')){
+            cell.css('background-color', playerColor);
+            cell.addClass('active');
+            ss.rpc('game.inputChange', {x: x, y: y, value: 1});
+          }
+      }
 
-					}else{
-						theCell.css('background-color', playerColor);
-						theCell.addClass('active');
-					  //ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
-
-					}
-			});
-				*/
-			$('td').bind( "vmouseout", function(){
-				var theCell = $(this);
-				theCell.x = theCell.attr('id');
-				theCell.y = theCell.parent().attr('id');
-//				if(clicking == true){
-					//console.log('Moved in cell: ' + theCell.x + ',' + theCell.y + ' ; clicking: ' + clicking);
-//					if (theCell.hasClass('active')){
-//						theCell.css('background-color', '');
-//						theCell.removeClass('active');
-            //ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 0});
-//					}else{
-						theCell.css('background-color', playerColor);
-//						theCell.addClass('active');
-            //ss.rpc('game.inputChange', {x: theCell.attr('id'), y: theCell.parent().attr('id'), value: 1});
-//					}
-//				}
+      $('td').bind( "vmousedown", function(){
+        clicking = true;
+        toolModeAdd = !$(this).hasClass('active')
+        checkCell(this)
+      })
+      
+      $(document).bind( "vmouseup", function(){
+        clicking = false;
+      })
+      
+			$('td').bind( "vmouseover", function(e){
+				if(clicking == true){
+          checkCell(this)
+				}
+        //e.preventDefault();
 			});
 			
 			document.body.addEventListener('touchstart', function(e){ e.preventDefault(); });			
@@ -121,7 +96,15 @@
 		
 	</script>
 	<style>		
-		html, body {height: 100%;}
+		* {
+      -moz-user-select: none; 
+      -khtml-user-select: none; 
+      -webkit-user-select: none; 
+      -o-user-select: none;  
+    }
+    html, body {
+      height: 100%;
+    }
 		.container{
 			height: 80%;
 		}
