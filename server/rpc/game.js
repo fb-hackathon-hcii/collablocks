@@ -73,7 +73,7 @@ exports.actions = function(req, res, ss) {
     //TODO
     var playernum = 10
     console.log(levelGenerator)
-    var level = levelGenerator.generateLevelOneJSON(gameSize.x, gameSize.y, playernum)
+    var level = levelGenerator.generateLevelTwo(gameSize.x, gameSize.y, playernum)
     ss.publish.channel('results', 'newLevel', level)
     return level
   }

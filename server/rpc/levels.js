@@ -34,6 +34,22 @@ exports.actions = function(req, res, ss) {
       }
 
       return res(jsonver)
+    },
+
+
+    generateLevelTwo: function(xmax, ymax, zmax)
+    {
+      var outData = []
+      for(var i=0; i <xmax*ymax; i++)
+      {
+            outData.push( Math.round( i%xmax/xmax * zmax ) )
+      }
+      var jsonver = {
+        name: 'The Slope',
+        bounds: {x:xmax, y:ymax, v:zmax},
+        data: outData
+      }
+      return jsonver
     }
 
   }
