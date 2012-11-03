@@ -92,6 +92,7 @@
 	
 	function addBlock(x, y, color, id)
 	{
+		
 		var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors } );
 		material.opacity = .5;
 
@@ -99,6 +100,7 @@
 		var voxelBlock = addRawBlock(x, y, z, color, material);
 		voxelBlock.id = id;
 		grid[x][y].push(voxelBlock);
+		
 	}
 	
 	function addEmptyBlock(x, y, z)
@@ -175,8 +177,10 @@
 		render();
 	}
 	
+	var fps = 0
+
 	function render() {
-	
+		fps++
 		if ( isShiftDown ) {
 	
 			theta += mouse2D.x * 3;
@@ -223,6 +227,77 @@
 		removeBlock(15, 15, 6);
 		removeBlock(15, 15, 5);
 	}
+
+	// wireframe functions
+
+	function addMeshBlock(x,y,z, inColor)
+	{
+		var geometry = new THREE.CubeGeometry(blockSize, blockSize, blockSize)
+
+		var material = new THREE.MeshBasicMaterial( { color: inColor, wireframe: true, transparent: true, wireframeLinewidth: 1 } ); 
+
+		var voxel = new THREE.Mesh( geometry, material );
+		voxel.position.x = blockSize * (x-8) + 25;
+		voxel.position.y = blockSize * y + 25;
+		voxel.position.z = blockSize * (z-8) + 25;
+		voxel.matrixAutoUpdate = false;
+		voxel.updateMatrix();
+		//console.log(voxel);
+		scene.add( voxel );
+
+	}
+
+	function createRandomColor()
+	{
+		var color = new THREE.Color(0xffffff)
+		color.setRGB(Math.random().toFixed(2), Math.random().toFixed(2), Math.random().toFixed(2))
+		return color
+	}
+
+	function coinToss()
+	{
+		var val = Math.random().toFixed(2)
+		if(val > 0.5)
+			return 1
+		else
+			return 0
+	}
+
+	visualizeLevel = function(inJSON)
+	{
+		addMeshBlock(0,0,0, createRandomColor())
+		var levelColor = createRandomColor()
+		var xbound = inJSON['bounds']['x']
+		//var zbound = inJSON['bounds']['y']
+		var levelData = inJSON['data']
+
+		var x = z = prvx = 0
+		for(var i=0;i<levelData.length;i++)
+		{
+			for (var h=0; h < levelData[i]; h++) {
+				addMeshBlock(i % xbound, h, Math.floor(i/xbound), levelColor)		
+			}
+		}
+
+			/*
+
+			x = i%xbound
+
+			if(prvx == x)
+				z=0
+			else
+				z++
+
+			for(var j=0;j<levelData[i];j++)
+			{
+				console.log(x)
+				addMeshBlock(x,j,z, levelColor)	
+			}
+
+			prvx = x
+		*/
+
+	}
 	
 		
 $(document).ready(function() {
@@ -230,15 +305,34 @@ $(document).ready(function() {
 	animate();
 
 	ss.event.on('setBlock', function(options) {
-	  addBlock(options.x, options.y, options.color, options.id)
+		console.log('on setBlock', options)
+		var t = Date.now()
+		addBlock(options.x, options.y, options.color, options.id)
+		//render()
+		console.log('addblock:' + (Date.now() - t))
+		
 	});
 
 	ss.event.on('removeBlock', function(options) {
 	  removeBlock(options.x, options.y, options.id)
 	});
 
+	ss.event.on('newLevel', function(level) {
+		console.log('new level!', level)
+	})
+
 	ss.rpc('game.subscribeView', function(res){
 		console.log('subscribed to updates', res)
+	})
+
+	setInterval(function(){
+		//console.log('fps: '+fps)
+		fps=0
+	}, 1000)
+
+	ss.rpc('levels.generateLevelOneJSON', 16, 16, 4, function(res) {
+		console.log(res)
+		visualizeLevel(res)
 	})
 
 });

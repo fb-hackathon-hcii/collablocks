@@ -32,6 +32,8 @@ ss.client.define('teamtwo', {
   tmpl: '*'
 });
 
+ss.session.store.use('redis');
+
 
 // Serve this client on the root URL
 ss.http.route('/', function(req, res){
