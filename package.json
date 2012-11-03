@@ -8,6 +8,7 @@
   "dependencies": {
     "socketstream": "0.3.x",
     "ss-stylus": "0.1.x",
-    "ss-hogan": "0.1.x"
+    "ss-hogan": "0.1.x",
+    "ss-heartbeat-responder": "0.1.x"
   }
 }
