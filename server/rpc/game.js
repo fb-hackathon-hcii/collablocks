@@ -83,7 +83,7 @@ exports.actions = function(req, res, ss) {
 
     subscribeView: function() {
       req.session.channel.subscribe('results')
-      getNewLevel()
+      //getNewLevel()
       return res(true)
     },
 
