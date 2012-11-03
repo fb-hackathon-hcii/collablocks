@@ -15,19 +15,18 @@
 		<SocketStream/>
 	</head>
 	<body>
+			<div class="well" style="background-color: #1199FF;">
+				<p style="color: #DDDDDD">HELLO</p>
+				<div class="progress progress-striped active">
+					<div class="bar bar-success" id="level-complete" style="width: 40%;"></div>
+				</div>
+			</div>
+
 		<script type="text/javascript">
-			$(document).ready(function() {
-				/*
-				testAddEmptyBlock();
-				testAddBlock();
-				testRemoveBlock();
-				*/
 
-				ss.rpc('game.subscribeTeam1', function(res){
-					console.log('subscribed to team1 updates', res)
-				})
+			init()
+			animate()
 
-			});
 		</script>
 	</body>
 </html>

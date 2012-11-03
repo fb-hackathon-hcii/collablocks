@@ -71,7 +71,7 @@ exports.actions = function(req, res, ss) {
 
   var getNewLevel = function() {
     //TODO
-    var playernum = 10
+    var playernum = 4
     console.log(levelGenerator)
     var level = levelGenerator.generateLevelOneJSON(gameSize.x, gameSize.y, playernum)
     ss.publish.channel('results', 'newLevel', level)
@@ -83,12 +83,11 @@ exports.actions = function(req, res, ss) {
 
     subscribeView: function() {
       req.session.channel.subscribe('results')
+      getNewLevel()
       return res(true)
     },
 
     subscribeTeam1: function() {
-      console.log(getNewLevel())
-
       req.session.channel.subscribe('resultsteam1')
       return res(true)
     },

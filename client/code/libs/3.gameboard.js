@@ -1,10 +1,14 @@
 	var container, stats;
 	var camera, scene, renderer;
 	var projector, plane;
-	var mouse2D, mouse3D, ray, theta = 45,
+	var mouse2D, mouse3D, ray, theta = 0,
 	isShiftDown = false, isCtrlDown = false,
-	target = new THREE.Vector3( 0, 200, 0 );
+	target = new THREE.Vector3( 0, -100, 0 );
 	var ROLLOVERED;
+
+	var fps = 0
+	var diff = 0.4
+	var iter = 0
 	
 
 	var blockSize = 50;
@@ -27,6 +31,9 @@
 	
 		camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000 );
 		camera.position.y = 800;
+		camera.position.x = 100;
+		camera.position.z = 100;
+		camera.lookAt( target );
 	
 		scene = new THREE.Scene();
 	
@@ -176,16 +183,17 @@
 		requestAnimationFrame( animate );
 		render();
 	}
-	
-	var fps = 0
+
 
 	function render() {
-		fps++
-		if ( isShiftDown ) {
-	
-			theta += mouse2D.x * 3;
-	
+
+		iter++
+		if(iter > 125)
+		{
+			diff = -diff
+			iter = -125
 		}
+		theta += diff
 	
 		camera.position.x = 1400 * Math.sin( theta * Math.PI / 360 );
 		camera.position.z = 1400 * Math.cos( theta * Math.PI / 360 );
@@ -265,7 +273,7 @@
 
 	visualizeLevel = function(inJSON)
 	{
-		addMeshBlock(0,0,0, createRandomColor())
+		//addMeshBlock(0,0,0, createRandomColor())
 		var levelColor = createRandomColor()
 		var xbound = inJSON['bounds']['x']
 		//var zbound = inJSON['bounds']['y']
@@ -301,8 +309,12 @@
 	
 		
 $(document).ready(function() {
-	init();
-	animate();
+	//init();
+	//animate();
+
+	ss.rpc('game.subscribeTeam1', function(res){
+		console.log('subscribed to team1 updates', res)
+	})
 
 	ss.event.on('setBlock', function(options) {
 		console.log('on setBlock', options)
@@ -319,21 +331,26 @@ $(document).ready(function() {
 
 	ss.event.on('newLevel', function(level) {
 		console.log('new level!', level)
+		visualizeLevel(level)
 	})
 
 	ss.rpc('game.subscribeView', function(res){
 		console.log('subscribed to updates', res)
 	})
 
+	/*
 	setInterval(function(){
 		//console.log('fps: '+fps)
 		fps=0
 	}, 1000)
+*/
 
+	/*
 	ss.rpc('levels.generateLevelOneJSON', 16, 16, 4, function(res) {
 		console.log(res)
 		visualizeLevel(res)
 	})
+	*/
 
 });
 
