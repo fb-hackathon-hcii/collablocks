@@ -93,7 +93,7 @@ exports.actions = function(req, res, ss) {
           grid[x*gameSize.x+y-1] = z
           req.session.grid = grid
           req.session.save(function(err){
-            console.log('Session data saved:', req.session.grid) 
+            console.log('Session data saved:', req.session.color) 
           })
           ss.publish.channel('results', 'setBlock', {x:x, y:y, color: req.session.color, id: req.sessionId})
         }
