@@ -380,7 +380,7 @@ $(document).ready(function() {
 	animate();
 
 	var team = $(document)[0]['title']
-	
+	window.players = 0
 	/*
 	if(team == 'Pirates')
 	{
