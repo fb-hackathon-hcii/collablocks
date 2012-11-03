@@ -92,6 +92,7 @@
 	
 	function addBlock(x, y, color, id)
 	{
+		
 		var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors } );
 		material.opacity = .5;
 
@@ -99,6 +100,7 @@
 		var voxelBlock = addRawBlock(x, y, z, color, material);
 		voxelBlock.id = id;
 		grid[x][y].push(voxelBlock);
+		
 	}
 	
 	function addEmptyBlock(x, y, z)
@@ -175,8 +177,10 @@
 		render();
 	}
 	
+	var fps = 0
+
 	function render() {
-	
+		fps++
 		if ( isShiftDown ) {
 	
 			theta += mouse2D.x * 3;
@@ -230,7 +234,12 @@ $(document).ready(function() {
 	animate();
 
 	ss.event.on('setBlock', function(options) {
-	  addBlock(options.x, options.y, options.color, options.id)
+		console.log('on setBlock', options)
+		var t = Date.now()
+		addBlock(options.x, options.y, options.color, options.id)
+		//render()
+		console.log('addblock:' + (Date.now() - t))
+		
 	});
 
 	ss.event.on('removeBlock', function(options) {
@@ -240,6 +249,11 @@ $(document).ready(function() {
 	ss.rpc('game.subscribeView', function(res){
 		console.log('subscribed to updates', res)
 	})
+
+	setInterval(function(){
+		//console.log('fps: '+fps)
+		fps=0
+	}, 1000)
 
 });
 

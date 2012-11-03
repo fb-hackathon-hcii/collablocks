@@ -9,10 +9,15 @@
   		$(document).ready(function(){
       
       var playerColor = '#000000'
+      var team = null
       ss.rpc('game.registerClient', function(response, detail){
         console.log('registered', response, detail)
         if(response && detail.color) {
           playerColor = detail.color
+          team = detail.team
+          if(team != null) {
+            $('#teamname').text('Team ' + team)
+          }
         }
       });
 
@@ -89,7 +94,7 @@
 	</style>
 </head>
 <body>
-
+  <div id="teamname"></div>
 	<div class="container">
 	<table></table>
 	</div>

@@ -55,6 +55,7 @@ exports.actions = function(req, res, ss) {
   }
 
   var gameSize = {x:15, y:15}
+  var teamNames = ['Banana', 'Strawberry']
 
   /*
   var levels = [
@@ -82,11 +83,17 @@ exports.actions = function(req, res, ss) {
     },
 
     registerClient: function() {
-      var color = hslToRgb(Math.random(), 0.8, 0.8)
-      req.session.color = color
-      req.session.save(function(err){
-        return res(true, {color: color})  
-      })
+      if (!req.session.color || !req.session.team) {
+        var color = hslToRgb(Math.random(), 0.8, 0.8)
+        var team = Math.floor(Math.random()*2)
+        req.session.color = color
+        req.session.team = team
+        req.session.save(function(err){
+          return res(true, {color: color, team: teamNames[team]})  
+        })  
+      } else {
+        return res(true, {color: req.session.color, team: teamNames[req.session.team]})
+      }
 
     },
 
@@ -95,7 +102,7 @@ exports.actions = function(req, res, ss) {
       if (req.session && data && data.x != null && data.y != null && data.value != null) {
         var grid = req.session.grid || getEmptyGrid()
 
-        var x = Math.max(0, Math.min(gameSize.x-1, Math.floor(data.x)))
+        var x = Math.max(0, Math.min(gameSize.x, Math.floor(data.x)))
         var y = Math.max(0, Math.min(gameSize.y-1, Math.floor(data.y)))
         var z = Math.max(0, Math.min(1, Math.floor(data.value)))
 
