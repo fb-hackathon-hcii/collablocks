@@ -256,6 +256,11 @@
 			testAddBlock();
 			testRemoveBlock();
 
+
+			ss.event.on('setBlock', function(options) {
+			  addBlock(options.x, options.y, options.z)
+			});
+
 		</script>
 
 	</body>
