@@ -28,6 +28,7 @@
 
 			var blockSize = 50;
 
+
 			init();
 			animate();
 
@@ -36,13 +37,7 @@
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
 
-				var info = document.createElement( 'div' );
-				info.style.position = 'absolute';
-				info.style.top = '10px';
-				info.style.width = '100%';
-				info.style.textAlign = 'center';
-				info.innerHTML = '<a href="http://threejs.org" target="_blank">three.js</a> - voxel painter<br><strong>click</strong>: add voxel, <strong>control + click</strong>: remove voxel, <strong>shift</strong>: rotate, <a href="javascript:save();return false;">save .png</a>';
-				container.appendChild( info );
+
 
 				camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
 				camera.position.y = 800;
@@ -51,11 +46,33 @@
 
 				// Grid
 
-				var size = 400, step = 50;
+				var width = 300;
+				var length = 400;
 
 				var geometry = new THREE.Geometry();
 
-				for ( var i = - size; i <= size; i += step ) {
+				for ( var i = - width; i <= width; i += blockSize)
+				{
+					for (var k = - length; k <= length; k += blockSize)
+					{
+						// i think this is wrong, but it works. sorry
+						
+						geometry.vertices.push( new THREE.Vector3( - width, 0, i ) );
+						geometry.vertices.push( new THREE.Vector3(   width, 0, i ) );
+
+						geometry.vertices.push( new THREE.Vector3( i, 0, - width ) );
+						geometry.vertices.push( new THREE.Vector3( i, 0, width ) );
+
+						geometry.vertices.push( new THREE.Vector3(- length, 0, k ) );
+						geometry.vertices.push( new THREE.Vector3( length, 0,   k ) );					
+
+						geometry.vertices.push( new THREE.Vector3( k, 0, - length ) );
+						geometry.vertices.push( new THREE.Vector3( k, 0,   length ) );					
+					}
+				}
+/*
+				for ( var i = - size; i <= size; i += blockSize ) 
+				{
 
 					geometry.vertices.push( new THREE.Vector3( - size, 0, i ) );
 					geometry.vertices.push( new THREE.Vector3(   size, 0, i ) );
@@ -64,7 +81,7 @@
 					geometry.vertices.push( new THREE.Vector3( i, 0,   size ) );
 
 				}
-
+*/
 				var material = new THREE.LineBasicMaterial( { color: 0x000000, opacity: 0.2 } );
 
 				var line = new THREE.Line( geometry, material );
@@ -121,15 +138,27 @@
 			}
 
 
-			function addBlock(x, y, z)
+			function addBlock(x, y, z, color)
+			{
+				var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors } );
+				addRawBlock(x, y, z, color, material);
+			}
+			
+			function addEmptyBlock(x, y, z)
+			{
+				var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors } );
+				material.opacity = .1;
+
+				addRawBlock(x, y, z, 0x000000, material);
+			}
+			
+			function addRawBlock(x, y, z, color, material)
 			{
 				var geometry = new THREE.CubeGeometry( blockSize, blockSize, blockSize);
 
 				for ( var i = 0; i < geometry.faces.length; i ++ ) {
-					geometry.faces[ i ].color.setHex( 0x00ff80 );
+					geometry.faces[ i ].color.setHex( color );
 				}
-
-				var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors } );
 
 				var voxel = new THREE.Mesh( geometry, material );
 				voxel.position.x = blockSize * x + 25;
@@ -137,7 +166,6 @@
 				voxel.position.z = blockSize * z + 25;
 				voxel.matrixAutoUpdate = false;
 				voxel.updateMatrix();
-				console.log(voxel);
 				scene.add( voxel );
 			}
 
@@ -172,13 +200,20 @@
 			 */
 			function testAddBlock()
 			{
-				addBlock(0,0,0);
-				addBlock(7,0,0);
-				addBlock(0,0,7);
-				addBlock(-7,0,0);
-				addBlock(0,0,-7);
+				addBlock(7,0,0, 0x00ff80);
+				addBlock(0,0,7, 0x00ff80);
+				addBlock(-7,0,0, 0x00ff80);
+				addBlock(0,0,-7, 0x00ff80);
+				addEmptyBlock(0,0,0);
+				addEmptyBlock(0,1,0);
+				addEmptyBlock(0,2,0);
+				addEmptyBlock(0,3,0);
+				addEmptyBlock(0,4,0);
+				addBlock(0,0,0, 0x00ff80);
+				addBlock(0,1,0, 0x00ff80);
 
 			}
+			
 			testAddBlock();
 
 		</script>
