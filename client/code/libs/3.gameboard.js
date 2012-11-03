@@ -79,7 +79,7 @@
 		directionalLight.position.normalize();
 		scene.add( directionalLight );
 	
-		renderer = new THREE.CanvasRenderer();
+		renderer = new THREE.WebGLRenderer({antialias: true});
 		renderer.setSize( window.innerWidth, window.innerHeight );
 	
 		container.appendChild(renderer.domElement);
@@ -101,7 +101,7 @@
 	{
 		
 		var material = new THREE.MeshLambertMaterial( { vertexColors: THREE.FaceColors } );
-		material.opacity = .5;
+		material.opacity = .75;
 
 		var z = grid[x][y].length;
 		var voxelBlock = addRawBlock(x, y, z, color, material);
@@ -184,9 +184,7 @@
 		render();
 	}
 
-
 	function render() {
-
 		iter++
 		if(iter > 125)
 		{
@@ -198,9 +196,8 @@
 		camera.position.x = 1400 * Math.sin( theta * Math.PI / 360 );
 		camera.position.z = 1400 * Math.cos( theta * Math.PI / 360 );
 		camera.lookAt( target );
-	
+		
 		renderer.render( scene, camera );
-	
 	}
 	
 	/*
@@ -356,10 +353,11 @@ $(document).ready(function() {
 
 	/*
 	setInterval(function(){
-		//console.log('fps: '+fps)
+		console.log('fps: '+window.fps)
 		fps=0
 	}, 1000)
 	*/
+	
 
 });
 
