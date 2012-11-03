@@ -67,7 +67,7 @@ exports.actions = function(req, res, ss) {
 
   /* CONST */
   var gameSize = {x:16, y:16}
-  var teamNames = ['Banana', 'Strawberry']
+  var teamNames = ['Pirates', 'Ninjas']
 
   var getNewLevel = function() {
     //TODO

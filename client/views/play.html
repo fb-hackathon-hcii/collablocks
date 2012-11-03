@@ -7,6 +7,8 @@
     <title>Welcome to 3D Collab</title>
   	<script>
   		$(document).ready(function(){
+
+      ss.heartbeatStart()
       
       var playerColor = '#000000'
       var team = null
@@ -21,7 +23,7 @@
         }
       });
 
-  			var tableWidth;
+ 			var tableWidth;
 			var tableHeight;
 			var numTD = 16;
 			var numTR = 16;
@@ -69,10 +71,14 @@
           checkCell(this)
 				}
         //e.preventDefault();
-			});
+			})
 			
 			document.body.addEventListener('touchstart', function(e){ e.preventDefault(); });			
-		});
+		
+      $(window).on('beforeunload', function() {
+        ss.heartbeatStop()
+      })
+    })
 			
   	</script>
   	<script>

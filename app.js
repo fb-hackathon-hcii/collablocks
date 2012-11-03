@@ -3,13 +3,7 @@
 var http = require('http'),
     ss = require('socketstream');
 
-// Define a single-page client called 'main'
-ss.client.define('main', {
-  view: 'app.html',
-  css:  ['libs/', 'app.styl'],
-  code: ['libs/', 'app'],
-  tmpl: '*'
-});
+ss.session.store.use('redis');
 
 ss.client.define('play', {
   view: 'play.html',
@@ -32,27 +26,31 @@ ss.client.define('teamtwo', {
   tmpl: '*'
 });
 
-ss.session.store.use('redis');
-
-
 // Serve this client on the root URL
 ss.http.route('/', function(req, res){
-  res.serveClient('main');
-});
-
-// Serve this client on the root URL
-ss.http.route('/play', function(req, res){
   res.serveClient('play');
 });
-
-// Serve this client on the root URL
 ss.http.route('/pirates', function(req, res){
   res.serveClient('teamone');
 });
-
-// Serve this client on the root URL
 ss.http.route('/ninjas', function(req, res){
   res.serveClient('teamtwo');
+});
+
+//console.log(ss.events)
+
+ss.events.on("close",function(session){
+  console.log('client disconnected close')
+})
+ss.events.on("end",function(session){
+  console.log('client disconnected end')
+})
+
+
+ss.responders.add(require('ss-heartbeat-responder'), {beatDelay:5, expireDelay:10, purgeDelay:15, logging:1});
+
+ss.api.heartbeat.on('disconnect', function(session) {
+  console.log('client disconnected')
 });
 
 // Code Formatters
@@ -70,3 +68,4 @@ server.listen(3000);
 
 // Start SocketStream
 ss.start(server);
+
