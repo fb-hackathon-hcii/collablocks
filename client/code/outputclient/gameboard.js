@@ -366,13 +366,16 @@
 			window.players = num
 			$('#active-players').text(num.toString())
 
-			if(num == 1)
+			if(num == 3)
 			{
 				//activate the next level
 				if(window.team == 'Pirates')
-					ss.rpc('game.activateNextLevel', 1, num, 'resultsteam1')
+				{
+					ss.rpc('game.activateNextLevel', 3, num, 'resultsteam1')
+					ss.publish.all('clearInput')
+				}
 				else
-					ss.rpc('game.activateNextLevel', 1, num, 'resultsteam2')
+					ss.rpc('game.activateNextLevel', 3, num, 'resultsteam2')
 			}
 		}
 		else

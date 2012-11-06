@@ -76,6 +76,10 @@ var getEmptyGrid = function(initVal) {
       case 2:
         level = levelGenerator.generateLevelTwoJSON(gameSize.x, gameSize.y, playernum)
         break;
+
+      case 3:
+        level = levelGenerator.generateLevelThreeJSON(gameSize.x, gameSize.y, playernum)
+        break;
     }
 
     if(inChannel == 'resultsteam1')
