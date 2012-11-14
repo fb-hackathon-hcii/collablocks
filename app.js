@@ -3,7 +3,12 @@
 var http = require('http'),
     ss = require('socketstream');
 
-ss.session.store.use('redis');
+var redisConfig = {
+  host: '0.0.0.0',
+  port: 2338
+}
+
+ss.session.store.use('redis', redisConfig);
 
 ss.client.define('play', {
   view: 'play.html',
@@ -82,7 +87,7 @@ if (ss.env === 'production') ss.client.packAssets();
 
 // Start web server
 var server = http.Server(ss.http.middleware);
-server.listen(3000);
+server.listen(2337);
 
 // Start SocketStream
 ss.start(server);
