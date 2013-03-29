@@ -1,1 +1,1 @@
-# Welcome to your new realtime app
+# Collablocks - An experiment in physical + social gaming
